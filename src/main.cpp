@@ -1,17 +1,19 @@
 #include "raylib.h"
 
-int main() 
+int main()
 {
+    // init
     const int screenWidth = 800;
     const int screenHeight = 600;
-
     InitWindow(screenWidth, screenHeight, "raylib pong clone");
-    SetTargetFPS(60); 
+    SetTargetFPS(60);
 
-    while (!WindowShouldClose()) {
+    // main loop
+    while (!WindowShouldClose())
+    {
         BeginDrawing();
-            ClearBackground(BLACK);
-            DrawText("raylib pong clone", 190, 200, 20, LIGHTGRAY);
+            // update
+            // draw
         EndDrawing();
     }
 
