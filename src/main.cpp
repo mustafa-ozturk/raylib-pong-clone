@@ -32,6 +32,7 @@ void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints);
 void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime);
 void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth, int screenHeight);
 void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX, int rightPaddleY);
+void DrawMidLine(int screenWidth, int screenHeight);
 
 int main() {
   // init
@@ -101,6 +102,7 @@ int main() {
         rightPaddle.Draw();
         DrawPlayerPoints(leftPlayerPoints, rightPlayerPoints);
         DrawDebugText(ball, leftPaddle.x, leftPaddle.y, rightPaddle.x, rightPaddle.y);
+        DrawMidLine(screenWidth, screenHeight);
       } break;
       case GameScreen::END: {
         DrawEndScreen(rightPlayerPoints, leftPlayerPoints, screenWidth, screenHeight);
@@ -284,4 +286,10 @@ void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX
 
   std::string getFrameTime = "GetFrameTime(): " + std::to_string(GetFrameTime());
   DrawText(getFrameTime.c_str(), 0, 40, 14, GREEN);
+}
+
+void DrawMidLine(int screenWidth, int screenHeight) {
+    for (int y = 0; y < screenHeight; y+= 55) {
+        DrawRectangle(screenWidth / 2 - 2, y, 4, 50, WHITE);
+    }
 }
