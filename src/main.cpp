@@ -31,6 +31,7 @@ void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& le
 void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints);
 void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime);
 void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth, int screenHeight);
+void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX, int rightPaddleY);
 
 int main() {
   // init
@@ -44,12 +45,14 @@ int main() {
   int rightPlayerPoints = 0;
 
   // init ball
+  const int ballBaseSpeedX = 400;
+  const int ballBaseSpeedY = 350;
   Ball ball;
   ball.x = screenWidth / 2.0f;
   ball.y = 0;
   ball.radius = 5;
-  ball.speedX = 500;
-  ball.speedY = 350;
+  ball.speedX = ballBaseSpeedX;
+  ball.speedY = ballBaseSpeedY;
 
   // init left paddle
   Paddle leftPaddle;
@@ -97,6 +100,7 @@ int main() {
         leftPaddle.Draw();
         rightPaddle.Draw();
         DrawPlayerPoints(leftPlayerPoints, rightPlayerPoints);
+        DrawDebugText(ball, leftPaddle.x, leftPaddle.y, rightPaddle.x, rightPaddle.y);
       } break;
       case GameScreen::END: {
         DrawEndScreen(rightPlayerPoints, leftPlayerPoints, screenWidth, screenHeight);
@@ -104,8 +108,8 @@ int main() {
         if (IsKeyDown(KEY_SPACE)) {
           ball.x = GetScreenWidth() / 2;
           ball.y = 0;
-          ball.speedX = 300;
-          ball.speedY = 300;
+          ball.speedX = ballBaseSpeedX;
+          ball.speedY = ballBaseSpeedY;
           leftPaddle.x = 50;
           leftPaddle.y = GetScreenHeight() / 2;
           leftPaddle.height = 100;
@@ -260,4 +264,24 @@ void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth,
   } else {
     DrawText(replayText, screenWidth / 2 - replayTextWidth / 2, screenHeight / 2, 40, GRAY);
   }
+}
+
+void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX, int rightPaddleY) {
+  DrawFPS(0, 0);
+
+  std::string ballPosDebug =
+      "x: " + std::to_string(int(ball.x)) + " , y: " + std::to_string(int(ball.y));
+  DrawText(ballPosDebug.c_str(), int(ball.x) + 10, int(ball.y) + 10, 14, GREEN);
+
+  std::string ballSpeedDebug = "ball.speed x: " + std::to_string(int(ball.speedX)) +
+                               " , ball.speed y: " + std::to_string(int(ball.speedY));
+  DrawText(ballSpeedDebug.c_str(), 0, 20, 14, GREEN);
+
+  DrawText(TextFormat("x: %i, y: %i", leftPaddleX, leftPaddleY), leftPaddleX + 20, leftPaddleY, 14,
+           GREEN);
+  DrawText(TextFormat("x: %i, y: %i", rightPaddleX, rightPaddleY), rightPaddleX - 100, rightPaddleY,
+           14, GREEN);
+
+  std::string getFrameTime = "GetFrameTime(): " + std::to_string(GetFrameTime());
+  DrawText(getFrameTime.c_str(), 0, 40, 14, GREEN);
 }
