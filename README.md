@@ -10,3 +10,7 @@ modified clone of classic pong using raylib and c++
 # compile and run the game
 ./run
 ```
+
+demo: (*not accurate fps*)
+
+![gameplay](pong.gif)
