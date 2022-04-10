@@ -39,7 +39,7 @@ struct Paddle
 };
 
 void DrawStartScreen();
-Ball InitBall();
+void CheckCollision(Ball *ball, Paddle *leftPaddle, Paddle *rightPaddle, int *leftPlayerPoint, int *rightPlayerPoint, int screenWidth, int screenHeight);
 
 int main()
 {
@@ -50,6 +50,9 @@ int main()
     SetTargetFPS(60);
 
     GameScreen currentScreen = GameScreen::START;
+    int leftPlayerPoints;
+    int rightPlayerPoints;
+
     // init ball
     Ball ball;
     ball.x = screenWidth / 2.0f;
@@ -77,53 +80,49 @@ int main()
     while (!WindowShouldClose())
     {
         BeginDrawing();
-            // update
-            float deltaTime = GetFrameTime();
-            switch(currentScreen)
+        // update
+        float deltaTime = GetFrameTime();
+        switch (currentScreen)
+        {
+        case GameScreen::GAME:
+        {
+            ball.x += ball.speedX * deltaTime;
+            ball.y += ball.speedY * deltaTime;
+
+            CheckCollision(&ball, &leftPaddle, &rightPaddle, &leftPlayerPoints, &rightPlayerPoints, screenWidth, screenHeight);
+        }
+        break;
+        case GameScreen::END:
+        {
+        }
+        break;
+        }
+        // draw
+        ClearBackground(BLACK);
+        switch (currentScreen)
+        {
+        case GameScreen::START:
+        {
+            DrawStartScreen();
+
+            if (IsKeyDown(KEY_SPACE))
             {
-                case GameScreen::GAME:
-                {
-                    ball.x += ball.speedX * deltaTime;
-                    ball.y += ball.speedY * deltaTime;
-
-                    if (ball.y < 0)
-                    {
-                        ball.speedY *= -1;
-                    }
-                    if (ball.y > screenHeight)
-                    {
-                        ball.speedY *= -1;
-                    }
-                } break;
-                case GameScreen::END:
-                {
-
-                } break;
-            } 
-            // draw
-            ClearBackground(BLACK);
-            switch(currentScreen)
-            {
-                case GameScreen::START:
-                {
-                    DrawStartScreen();
-
-                    if (IsKeyDown(KEY_SPACE))
-                    {
-                        currentScreen = GameScreen::GAME;
-                    }
-                } break;
-                case GameScreen::GAME:
-                {
-                    ball.Draw();
-                    leftPaddle.Draw();
-                    rightPaddle.Draw();
-                } break;
-                case GameScreen::END:
-                {
-
-                } break;
-            } 
+                currentScreen = GameScreen::GAME;
+            }
+        }
+        break;
+        case GameScreen::GAME:
+        {
+            ball.Draw();
+            leftPaddle.Draw();
+            rightPaddle.Draw();
+        }
+        break;
+        case GameScreen::END:
+        {
+        }
+        break;
+        }
         EndDrawing();
     }
 
@@ -134,17 +133,101 @@ int main()
 
 void DrawStartScreen()
 {
-    const char* title = "PONG";
+    const char *title = "PONG";
     int titleWidth = MeasureText(title, 100);
     DrawText(title, GetScreenWidth() / 2 - titleWidth / 2, 100, 100, WHITE);
 
-    const char* playText = "PRESS [SPACE] TO PLAY";
+    const char *playText = "PRESS [SPACE] TO PLAY";
     int playTextWidth = MeasureText(playText, 40);
 
     double timeSinceInit = GetTime();
-    if (int(timeSinceInit) % 2 == 0) {
+    if (int(timeSinceInit) % 2 == 0)
+    {
         DrawText(playText, GetScreenWidth() / 2 - playTextWidth / 2, GetScreenHeight() / 2, 40, WHITE);
-    } else {
+    }
+    else
+    {
         DrawText(playText, GetScreenWidth() / 2 - playTextWidth / 2, GetScreenHeight() / 2, 40, GRAY);
+    }
+}
+
+void CheckCollision(Ball *ball, Paddle *leftPaddle, Paddle *rightPaddle, int *leftPlayerPoint, int *rightPlayerPoint, int screenWidth, int screenHeight)
+{
+    if (ball->y < 0)
+    {
+        ball->speedY *= -1;
+    }
+    if (ball->y > screenHeight)
+    {
+        ball->speedY *= -1;
+    }
+
+    if (CheckCollisionCircleRec(Vector2{ball->x, ball->y}, ball->radius, leftPaddle->GetRect()))
+    {
+        if (ball->speedX < 0)
+        {
+            ball->speedX *= -1.1f;
+            if (ball->y - leftPaddle->y > 0)
+            {
+                ball->speedY = 250;
+            }
+            else
+            {
+                ball->speedY = -250;
+            }
+            if (leftPaddle->height > 10)
+            {
+                leftPaddle->height -= 5;
+                rightPaddle->height -= 5;
+            }
+        }
+    }
+
+    if (CheckCollisionCircleRec(Vector2{ball->x, ball->y}, ball->radius, rightPaddle->GetRect()))
+    {
+        if (ball->speedX > 0)
+        {
+            ball->speedX *= -1.1f;
+            if (ball->y - rightPaddle->y > 0)
+            {
+                ball->speedY = 250;
+            }
+            else
+            {
+                ball->speedY = -250;
+            }
+            if (leftPaddle->height > 10)
+            {
+                leftPaddle->height -= 5;
+                rightPaddle->height -= 5;
+            }
+        }
+    }
+    if (ball->x < 0)
+    {
+        leftPlayerPoint++;
+        ball->x = screenWidth / 2;
+        ball->y = 0;
+        ball->speedX = 300;
+        ball->speedY = 300;
+
+        leftPaddle->x = 50;
+        leftPaddle->y = screenHeight/ 2;
+        rightPaddle->x = screenWidth - 50;
+        rightPaddle->y = screenHeight/ 2;
+    }
+
+    if (ball->x > screenWidth)
+    {
+        rightPlayerPoint++;
+        ball->x = screenWidth / 2;
+        ball->y = 0;
+        ball->speedX = 300;
+        ball->speedY = 300;
+
+        leftPaddle->x = 50;
+        leftPaddle->y = screenHeight/ 2;
+        rightPaddle->x = screenWidth - 50;
+        rightPaddle->y = screenHeight/ 2;
     }
 }
