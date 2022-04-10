@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <iostream>
 
 typedef enum GameScreen
 {
@@ -7,28 +8,58 @@ typedef enum GameScreen
     END
 } GameScreen;
 
+struct Ball
+{
+    float x, y;
+    float speedX, speedY;
+    float radius;
+
+    void Draw()
+    {
+        DrawCircle(int(x), int(y), radius, WHITE);
+    }
+};
+
 void DrawStartScreen();
+Ball InitBall();
 
 int main()
 {
     // init
     const int screenWidth = 800;
     const int screenHeight = 600;
-    GameScreen currentScreen = GameScreen::START;
-
     InitWindow(screenWidth, screenHeight, "raylib pong clone");
     SetTargetFPS(60);
+
+    GameScreen currentScreen = GameScreen::START;
+    Ball ball;
+    ball.x = screenWidth / 2.0f;
+    ball.y = 0;
+    ball.radius = 5;
+    ball.speedX = 500;
+    ball.speedY = 350;
 
     // main loop
     while (!WindowShouldClose())
     {
         BeginDrawing();
             // update
+            float deltaTime = GetFrameTime();
             switch(currentScreen)
             {
                 case GameScreen::GAME:
                 {
+                    ball.x += ball.speedX * deltaTime;
+                    ball.y += ball.speedY * deltaTime;
 
+                    if (ball.y < 0)
+                    {
+                        ball.speedY *= -1;
+                    }
+                    if (ball.y > screenHeight)
+                    {
+                        ball.speedY *= -1;
+                    }
                 } break;
                 case GameScreen::END:
                 {
@@ -50,7 +81,7 @@ int main()
                 } break;
                 case GameScreen::GAME:
                 {
-
+                    ball.Draw();
                 } break;
                 case GameScreen::END:
                 {
