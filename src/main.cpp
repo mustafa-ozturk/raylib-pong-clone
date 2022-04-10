@@ -30,6 +30,7 @@ void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& le
                     int& rightPlayerPoint, int screenWidth, int screenHeight);
 void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints);
 void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime);
+void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth, int screenHeight);
 
 int main() {
   // init
@@ -70,16 +71,16 @@ int main() {
     BeginDrawing();
     // update
     float deltaTime = GetFrameTime();
-    switch (currentScreen) {
-      case GameScreen::GAME: {
-        ball.x += ball.speedX * deltaTime;
-        ball.y += ball.speedY * deltaTime;
-        UpdatePaddle(&leftPaddle, &rightPaddle, deltaTime);
-        CheckCollision(&ball, &leftPaddle, &rightPaddle, leftPlayerPoints, rightPlayerPoints,
-                       screenWidth, screenHeight);
-      } break;
-      case GameScreen::END: {
-      } break;
+    if (currentScreen == GameScreen::GAME) {
+      ball.x += ball.speedX * deltaTime;
+      ball.y += ball.speedY * deltaTime;
+      UpdatePaddle(&leftPaddle, &rightPaddle, deltaTime);
+      CheckCollision(&ball, &leftPaddle, &rightPaddle, leftPlayerPoints, rightPlayerPoints,
+                     screenWidth, screenHeight);
+
+      if (rightPlayerPoints == 3 || leftPlayerPoints == 3) {
+        currentScreen = GameScreen::END;
+      }
     }
     // draw
     ClearBackground(BLACK);
@@ -98,6 +99,23 @@ int main() {
         DrawPlayerPoints(leftPlayerPoints, rightPlayerPoints);
       } break;
       case GameScreen::END: {
+        DrawEndScreen(rightPlayerPoints, leftPlayerPoints, screenWidth, screenHeight);
+
+        if (IsKeyDown(KEY_SPACE)) {
+          ball.x = GetScreenWidth() / 2;
+          ball.y = 0;
+          ball.speedX = 300;
+          ball.speedY = 300;
+          leftPaddle.x = 50;
+          leftPaddle.y = GetScreenHeight() / 2;
+          leftPaddle.height = 100;
+          rightPaddle.x = GetScreenWidth() - 50;
+          rightPaddle.y = GetScreenHeight() / 2;
+          rightPaddle.height = 100;
+          leftPlayerPoints = 0;
+          rightPlayerPoints = 0;
+          currentScreen = GameScreen::GAME;
+        }
       } break;
     }
     EndDrawing();
@@ -163,7 +181,6 @@ void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& le
     }
   }
   if (ball->x < 0) {
-    std::cout << "left player gets a point\n";
     leftPlayerPoint++;
     ball->x = screenWidth / 2;
     ball->y = 0;
@@ -177,7 +194,6 @@ void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& le
   }
 
   if (ball->x > screenWidth) {
-    std::cout << "right player gets a point\n";
     rightPlayerPoint++;
     ball->x = screenWidth / 2;
     ball->y = 0;
@@ -223,5 +239,25 @@ void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime) {
     if (rightPaddle->y <= GetScreenHeight() - rightPaddle->height / 2) {
       rightPaddle->y += rightPaddle->speedY * deltaTime;
     }
+  }
+}
+
+void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth, int screenHeight) {
+  const char* winnerText = nullptr;
+  if (rightPlayerPoints == 3 && leftPlayerPoints != 3) {
+    winnerText = "Right Player Wins!";
+  } else if (leftPlayerPoints == 3 && rightPlayerPoints != 3) {
+    winnerText = "Left Player Wins!";
+  }
+  int winnerTextWidth = MeasureText(winnerText, 60);
+  DrawText(winnerText, screenWidth / 2 - winnerTextWidth / 2, 200, 60, GREEN);
+
+  double timeSinceInit = GetTime();
+  const char* replayText = "PRESS [SPACE] TO REPLAY";
+  int replayTextWidth = MeasureText(replayText, 40);
+  if (int(timeSinceInit) % 2 == 0) {
+    DrawText(replayText, screenWidth / 2 - replayTextWidth / 2, screenHeight / 2, 40, WHITE);
+  } else {
+    DrawText(replayText, screenWidth / 2 - replayTextWidth / 2, screenHeight / 2, 40, GRAY);
   }
 }
