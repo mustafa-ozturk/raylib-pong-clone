@@ -200,7 +200,7 @@ void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& le
     }
   }
   if (ball->x < 0) {
-    leftPlayerPoints++;
+    rightPlayerPoints++;
     ball->x = screenWidth / 2;
     ball->y = 0;
     ball->speedX = 300;
@@ -213,7 +213,7 @@ void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& le
   }
 
   if (ball->x > screenWidth) {
-    rightPlayerPoints++;
+    leftPlayerPoints++;
     ball->x = screenWidth / 2;
     ball->y = 0;
     ball->speedX = -300;
@@ -265,7 +265,7 @@ void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth,
   const char* winnerText = nullptr;
   if (rightPlayerPoints == 3 && leftPlayerPoints != 3) {
     winnerText = "Right Player Wins!";
-  } else if (leftPlayerPoints == 3 && rightPlayerPoints != 3) {
+  } else {
     winnerText = "Left Player Wins!";
   }
   int winnerTextWidth = MeasureText(winnerText, 60);
