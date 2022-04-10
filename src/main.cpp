@@ -20,6 +20,24 @@ struct Ball
     }
 };
 
+struct Paddle
+{
+    float x, y;
+    float speedY;
+    float width, height;
+
+    Rectangle GetRect()
+    {
+        //                  centerX        centerY
+        return Rectangle{x - width / 2, y - height / 2, width, height};
+    }
+
+    void Draw()
+    {
+        DrawRectangleRec(GetRect(), WHITE);
+    }
+};
+
 void DrawStartScreen();
 Ball InitBall();
 
@@ -32,12 +50,28 @@ int main()
     SetTargetFPS(60);
 
     GameScreen currentScreen = GameScreen::START;
+    // init ball
     Ball ball;
     ball.x = screenWidth / 2.0f;
     ball.y = 0;
     ball.radius = 5;
     ball.speedX = 500;
     ball.speedY = 350;
+
+    // init left paddle
+    Paddle leftPaddle;
+    leftPaddle.x = 50;
+    leftPaddle.y = GetScreenHeight() / 2;
+    leftPaddle.width = 10;
+    leftPaddle.height = 100;
+    leftPaddle.speedY = 500;
+    // init right paddle
+    Paddle rightPaddle;
+    rightPaddle.x = GetScreenWidth() - 50;
+    rightPaddle.y = GetScreenHeight() / 2;
+    rightPaddle.width = 10;
+    rightPaddle.height = 100;
+    rightPaddle.speedY = 500;
 
     // main loop
     while (!WindowShouldClose())
@@ -82,6 +116,8 @@ int main()
                 case GameScreen::GAME:
                 {
                     ball.Draw();
+                    leftPaddle.Draw();
+                    rightPaddle.Draw();
                 } break;
                 case GameScreen::END:
                 {
