@@ -26,8 +26,8 @@ struct Paddle {
 };
 
 void DrawStartScreen();
-void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& leftPlayerPoint,
-                    int& rightPlayerPoint, int screenWidth, int screenHeight);
+void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& leftPlayerPoints,
+                    int& rightPlayerPoints, int screenWidth, int screenHeight);
 void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints);
 void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime);
 void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth, int screenHeight);
@@ -142,8 +142,8 @@ void DrawStartScreen() {
   }
 }
 
-void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& leftPlayerPoint,
-                    int& rightPlayerPoint, int screenWidth, int screenHeight) {
+void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& leftPlayerPoints,
+                    int& rightPlayerPoints, int screenWidth, int screenHeight) {
   if (ball->y < 0) {
     ball->speedY *= -1;
   }
@@ -181,7 +181,7 @@ void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& le
     }
   }
   if (ball->x < 0) {
-    leftPlayerPoint++;
+    leftPlayerPoints++;
     ball->x = screenWidth / 2;
     ball->y = 0;
     ball->speedX = 300;
@@ -194,10 +194,10 @@ void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& le
   }
 
   if (ball->x > screenWidth) {
-    rightPlayerPoint++;
+    rightPlayerPoints++;
     ball->x = screenWidth / 2;
     ball->y = 0;
-    ball->speedX = 300;
+    ball->speedX = -300;
     ball->speedY = 300;
 
     leftPaddle->x = 50;
