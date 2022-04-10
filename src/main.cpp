@@ -7,6 +7,8 @@ typedef enum GameScreen
     END
 } GameScreen;
 
+void DrawStartScreen();
+
 int main()
 {
     // init
@@ -24,10 +26,6 @@ int main()
             // update
             switch(currentScreen)
             {
-                case GameScreen::START:
-                {
-
-                } break;
                 case GameScreen::GAME:
                 {
 
@@ -43,7 +41,12 @@ int main()
             {
                 case GameScreen::START:
                 {
-                    
+                    DrawStartScreen();
+
+                    if (IsKeyDown(KEY_SPACE))
+                    {
+                        currentScreen = GameScreen::GAME;
+                    }
                 } break;
                 case GameScreen::GAME:
                 {
@@ -60,4 +63,21 @@ int main()
     CloseWindow();
 
     return 0;
+}
+
+void DrawStartScreen()
+{
+    const char* title = "PONG";
+    int titleWidth = MeasureText(title, 100);
+    DrawText(title, GetScreenWidth() / 2 - titleWidth / 2, 100, 100, WHITE);
+
+    const char* playText = "PRESS [SPACE] TO PLAY";
+    int playTextWidth = MeasureText(playText, 40);
+
+    double timeSinceInit = GetTime();
+    if (int(timeSinceInit) % 2 == 0) {
+        DrawText(playText, GetScreenWidth() / 2 - playTextWidth / 2, GetScreenHeight() / 2, 40, WHITE);
+    } else {
+        DrawText(playText, GetScreenWidth() / 2 - playTextWidth / 2, GetScreenHeight() / 2, 40, GRAY);
+    }
 }
