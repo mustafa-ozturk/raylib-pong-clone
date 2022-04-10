@@ -29,6 +29,7 @@ void DrawStartScreen();
 void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& leftPlayerPoint,
                     int& rightPlayerPoint, int screenWidth, int screenHeight);
 void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints);
+void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime);
 
 int main() {
   // init
@@ -73,7 +74,7 @@ int main() {
       case GameScreen::GAME: {
         ball.x += ball.speedX * deltaTime;
         ball.y += ball.speedY * deltaTime;
-
+        UpdatePaddle(&leftPaddle, &rightPaddle, deltaTime);
         CheckCollision(&ball, &leftPaddle, &rightPaddle, leftPlayerPoints, rightPlayerPoints,
                        screenWidth, screenHeight);
       } break;
@@ -198,4 +199,29 @@ void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints) {
   int rightPlayerPointTextWidth = MeasureText(TextFormat("%i", rightPlayerPoints), 100);
   DrawText(TextFormat("%i", rightPlayerPoints),
            GetScreenWidth() / 2 - 200 - rightPlayerPointTextWidth / 2, 50, 100, WHITE);
+}
+
+void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime) {
+  // left paddle
+  if (IsKeyDown(KEY_W)) {
+    if (leftPaddle->y >= 0 + leftPaddle->height / 2) {
+      leftPaddle->y -= leftPaddle->speedY * deltaTime;
+    }
+  }
+  if (IsKeyDown(KEY_S)) {
+    if (leftPaddle->y <= GetScreenHeight() - leftPaddle->height / 2) {
+      leftPaddle->y += leftPaddle->speedY * deltaTime;
+    }
+  }
+  // right paddle
+  if (IsKeyDown(KEY_UP)) {
+    if (rightPaddle->y >= 0 + rightPaddle->height / 2) {
+      rightPaddle->y -= rightPaddle->speedY * deltaTime;
+    }
+  }
+  if (IsKeyDown(KEY_DOWN)) {
+    if (rightPaddle->y <= GetScreenHeight() - rightPaddle->height / 2) {
+      rightPaddle->y += rightPaddle->speedY * deltaTime;
+    }
+  }
 }
