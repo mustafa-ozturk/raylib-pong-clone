@@ -25,7 +25,7 @@ struct Paddle {
   void Draw() { DrawRectangleRec(GetRect(), WHITE); }
 };
 
-void DrawStartScreen();
+void DrawStartScreen(int screenWidth, int screenHeight, bool debugMode);
 void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& leftPlayerPoints,
                     int& rightPlayerPoints, int screenWidth, int screenHeight);
 void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints);
@@ -34,7 +34,11 @@ void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth,
 void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX, int rightPaddleY);
 void DrawMidLine(int screenWidth, int screenHeight);
 
-int main() {
+int main(int argc, char* argv[]) {
+  bool debugMode = false;
+  if (argc == 2 && std::string(argv[1]) == "-debug") {
+    debugMode = true;
+  }
   // init
   const int screenWidth = 800;
   const int screenHeight = 600;
@@ -90,7 +94,7 @@ int main() {
     ClearBackground(BLACK);
     switch (currentScreen) {
       case GameScreen::START: {
-        DrawStartScreen();
+        DrawStartScreen(screenWidth, screenHeight, debugMode);
 
         if (IsKeyDown(KEY_SPACE)) {
           currentScreen = GameScreen::GAME;
@@ -101,8 +105,11 @@ int main() {
         leftPaddle.Draw();
         rightPaddle.Draw();
         DrawPlayerPoints(leftPlayerPoints, rightPlayerPoints);
-        DrawDebugText(ball, leftPaddle.x, leftPaddle.y, rightPaddle.x, rightPaddle.y);
         DrawMidLine(screenWidth, screenHeight);
+
+        if (debugMode) {
+          DrawDebugText(ball, leftPaddle.x, leftPaddle.y, rightPaddle.x, rightPaddle.y);
+        }
       } break;
       case GameScreen::END: {
         DrawEndScreen(rightPlayerPoints, leftPlayerPoints, screenWidth, screenHeight);
@@ -132,19 +139,25 @@ int main() {
   return 0;
 }
 
-void DrawStartScreen() {
+void DrawStartScreen(int screenWidth, int screenHeight, bool debugMode) {
   const char* title = "PONG";
   int titleWidth = MeasureText(title, 100);
-  DrawText(title, GetScreenWidth() / 2 - titleWidth / 2, 100, 100, WHITE);
+  DrawText(title, screenWidth / 2 - titleWidth / 2, 100, 100, WHITE);
 
   const char* playText = "PRESS [SPACE] TO PLAY";
   int playTextWidth = MeasureText(playText, 40);
 
   double timeSinceInit = GetTime();
   if (int(timeSinceInit) % 2 == 0) {
-    DrawText(playText, GetScreenWidth() / 2 - playTextWidth / 2, GetScreenHeight() / 2, 40, WHITE);
+    DrawText(playText, screenWidth / 2 - playTextWidth / 2, screenHeight / 2, 40, WHITE);
   } else {
-    DrawText(playText, GetScreenWidth() / 2 - playTextWidth / 2, GetScreenHeight() / 2, 40, GRAY);
+    DrawText(playText, screenWidth / 2 - playTextWidth / 2, screenHeight / 2, 40, GRAY);
+  }
+
+  if (debugMode) {
+    const char* debugModeText = "DEBUG MODE ENABLED";
+    int debugModeTextWidth = MeasureText(debugModeText, 20);
+    DrawText("DEBUG MODE ENABLED", screenWidth / 2 - debugModeTextWidth / 2, 100 + 80, 20, GREEN);
   }
 }
 
@@ -268,7 +281,8 @@ void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth,
   }
 }
 
-void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX, int rightPaddleY) {
+void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX,
+                   int rightPaddleY) {
   DrawFPS(0, 0);
 
   std::string ballPosDebug =
@@ -289,7 +303,7 @@ void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX
 }
 
 void DrawMidLine(int screenWidth, int screenHeight) {
-    for (int y = 0; y < screenHeight; y+= 55) {
-        DrawRectangle(screenWidth / 2 - 2, y, 4, 50, WHITE);
-    }
+  for (int y = 0; y < screenHeight; y += 55) {
+    DrawRectangle(screenWidth / 2 - 2, y, 4, 50, WHITE);
+  }
 }

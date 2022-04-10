@@ -4,6 +4,9 @@ modified clone of classic pong using raylib and c++
 # run cmake
 ./run-cmake 
 
-# compile and run the game
+# compile and run the game in debug mode
 ./debug
+
+# run the game
+./run
 ```
