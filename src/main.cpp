@@ -39,7 +39,8 @@ struct Paddle
 };
 
 void DrawStartScreen();
-void CheckCollision(Ball *ball, Paddle *leftPaddle, Paddle *rightPaddle, int *leftPlayerPoint, int *rightPlayerPoint, int screenWidth, int screenHeight);
+void CheckCollision(Ball *ball, Paddle *leftPaddle, Paddle *rightPaddle, int &leftPlayerPoint, int &rightPlayerPoint, int screenWidth, int screenHeight);
+void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints);
 
 int main()
 {
@@ -50,8 +51,8 @@ int main()
     SetTargetFPS(60);
 
     GameScreen currentScreen = GameScreen::START;
-    int leftPlayerPoints;
-    int rightPlayerPoints;
+    int leftPlayerPoints = 0;
+    int rightPlayerPoints = 0;
 
     // init ball
     Ball ball;
@@ -89,7 +90,7 @@ int main()
             ball.x += ball.speedX * deltaTime;
             ball.y += ball.speedY * deltaTime;
 
-            CheckCollision(&ball, &leftPaddle, &rightPaddle, &leftPlayerPoints, &rightPlayerPoints, screenWidth, screenHeight);
+            CheckCollision(&ball, &leftPaddle, &rightPaddle, leftPlayerPoints, rightPlayerPoints, screenWidth, screenHeight);
         }
         break;
         case GameScreen::END:
@@ -116,6 +117,7 @@ int main()
             ball.Draw();
             leftPaddle.Draw();
             rightPaddle.Draw();
+            DrawPlayerPoints(leftPlayerPoints, rightPlayerPoints);
         }
         break;
         case GameScreen::END:
@@ -151,7 +153,7 @@ void DrawStartScreen()
     }
 }
 
-void CheckCollision(Ball *ball, Paddle *leftPaddle, Paddle *rightPaddle, int *leftPlayerPoint, int *rightPlayerPoint, int screenWidth, int screenHeight)
+void CheckCollision(Ball *ball, Paddle *leftPaddle, Paddle *rightPaddle, int &leftPlayerPoint, int &rightPlayerPoint, int screenWidth, int screenHeight)
 {
     if (ball->y < 0)
     {
@@ -205,6 +207,7 @@ void CheckCollision(Ball *ball, Paddle *leftPaddle, Paddle *rightPaddle, int *le
     }
     if (ball->x < 0)
     {
+        std::cout << "left player gets a point\n";
         leftPlayerPoint++;
         ball->x = screenWidth / 2;
         ball->y = 0;
@@ -212,13 +215,14 @@ void CheckCollision(Ball *ball, Paddle *leftPaddle, Paddle *rightPaddle, int *le
         ball->speedY = 300;
 
         leftPaddle->x = 50;
-        leftPaddle->y = screenHeight/ 2;
+        leftPaddle->y = screenHeight / 2;
         rightPaddle->x = screenWidth - 50;
-        rightPaddle->y = screenHeight/ 2;
+        rightPaddle->y = screenHeight / 2;
     }
 
     if (ball->x > screenWidth)
     {
+        std::cout << "right player gets a point\n";
         rightPlayerPoint++;
         ball->x = screenWidth / 2;
         ball->y = 0;
@@ -226,8 +230,17 @@ void CheckCollision(Ball *ball, Paddle *leftPaddle, Paddle *rightPaddle, int *le
         ball->speedY = 300;
 
         leftPaddle->x = 50;
-        leftPaddle->y = screenHeight/ 2;
+        leftPaddle->y = screenHeight / 2;
         rightPaddle->x = screenWidth - 50;
-        rightPaddle->y = screenHeight/ 2;
+        rightPaddle->y = screenHeight / 2;
     }
+}
+
+void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints)
+{
+    int leftPlayerPointTextWidth = MeasureText(TextFormat("%i", leftPlayerPoints), 100);
+    DrawText(TextFormat("%i", leftPlayerPoints), GetScreenWidth() / 2 + 200 - leftPlayerPointTextWidth / 2, 50, 100, WHITE);
+
+    int rightPlayerPointTextWidth = MeasureText(TextFormat("%i", rightPlayerPoints), 100);
+    DrawText(TextFormat("%i", rightPlayerPoints), GetScreenWidth() / 2 - 200 - rightPlayerPointTextWidth / 2, 50, 100, WHITE);
 }
