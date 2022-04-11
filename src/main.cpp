@@ -79,16 +79,32 @@ int main(int argc, char* argv[]) {
     BeginDrawing();
     // update
     float deltaTime = GetFrameTime();
-    if (currentScreen == GameScreen::GAME) {
-      ball.x += ball.speedX * deltaTime;
-      ball.y += ball.speedY * deltaTime;
-      UpdatePaddle(&leftPaddle, &rightPaddle, deltaTime);
-      CheckCollision(&ball, &leftPaddle, &rightPaddle, leftPlayerPoints, rightPlayerPoints,
-                     screenWidth, screenHeight);
+    switch (currentScreen) {
+      case GameScreen::GAME: {
+        ball.x += ball.speedX * deltaTime;
+        ball.y += ball.speedY * deltaTime;
+        UpdatePaddle(&leftPaddle, &rightPaddle, deltaTime);
+        CheckCollision(&ball, &leftPaddle, &rightPaddle, leftPlayerPoints, rightPlayerPoints,
+                       screenWidth, screenHeight);
 
-      if (rightPlayerPoints == 3 || leftPlayerPoints == 3) {
-        currentScreen = GameScreen::END;
-      }
+        if (rightPlayerPoints == 3 || leftPlayerPoints == 3) {
+          currentScreen = GameScreen::END;
+        }
+      } break;
+      case GameScreen::END: {
+        ball.x = GetScreenWidth() / 2;
+        ball.y = 0;
+        ball.speedX = ballBaseSpeedX;
+        ball.speedY = ballBaseSpeedY;
+        leftPaddle.x = 50;
+        leftPaddle.y = GetScreenHeight() / 2;
+        leftPaddle.height = 100;
+        rightPaddle.x = GetScreenWidth() - 50;
+        rightPaddle.y = GetScreenHeight() / 2;
+        rightPaddle.height = 100;
+        leftPlayerPoints = 0;
+        rightPlayerPoints = 0;
+      } break;
     }
     // draw
     ClearBackground(BLACK);
@@ -115,18 +131,6 @@ int main(int argc, char* argv[]) {
         DrawEndScreen(rightPlayerPoints, leftPlayerPoints, screenWidth, screenHeight);
 
         if (IsKeyDown(KEY_SPACE)) {
-          ball.x = GetScreenWidth() / 2;
-          ball.y = 0;
-          ball.speedX = ballBaseSpeedX;
-          ball.speedY = ballBaseSpeedY;
-          leftPaddle.x = 50;
-          leftPaddle.y = GetScreenHeight() / 2;
-          leftPaddle.height = 100;
-          rightPaddle.x = GetScreenWidth() - 50;
-          rightPaddle.y = GetScreenHeight() / 2;
-          rightPaddle.height = 100;
-          leftPlayerPoints = 0;
-          rightPlayerPoints = 0;
           currentScreen = GameScreen::GAME;
         }
       } break;
