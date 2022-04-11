@@ -2,27 +2,41 @@
 
 #include "raylib.h"
 
-typedef enum GameScreen { START, GAME, END } GameScreen;
+typedef enum GameScreen
+{
+  START,
+  GAME,
+  END
+} GameScreen;
 
-struct Ball {
+struct Ball
+{
   float x, y;
   float speedX, speedY;
   float radius;
 
-  void Draw() { DrawCircle(int(x), int(y), radius, WHITE); }
+  void Draw()
+  {
+    DrawCircle(int(x), int(y), radius, WHITE);
+  }
 };
 
-struct Paddle {
+struct Paddle
+{
   float x, y;
   float speedY;
   float width, height;
 
-  Rectangle GetRect() {
+  Rectangle GetRect()
+  {
     //                  centerX        centerY
     return Rectangle{x - width / 2, y - height / 2, width, height};
   }
 
-  void Draw() { DrawRectangleRec(GetRect(), WHITE); }
+  void Draw()
+  {
+    DrawRectangleRec(GetRect(), WHITE);
+  }
 };
 
 void DrawStartScreen(int screenWidth, int screenHeight, bool debugMode);
@@ -34,9 +48,11 @@ void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth,
 void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX, int rightPaddleY);
 void DrawMidLine(int screenWidth, int screenHeight);
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
   bool debugMode = false;
-  if (argc == 2 && std::string(argv[1]) == "-debug") {
+  if (argc == 2 && std::string(argv[1]) == "-debug")
+  {
     debugMode = true;
   }
   // init
@@ -75,29 +91,39 @@ int main(int argc, char* argv[]) {
   rightPaddle.speedY = 500;
 
   // main loop
-  while (!WindowShouldClose()) {
+  while (!WindowShouldClose())
+  {
     BeginDrawing();
     // update
     float deltaTime = GetFrameTime();
-    switch (currentScreen) {
-      case GameScreen::START: {
-        if (IsKeyDown(KEY_SPACE)) {
+    switch (currentScreen)
+    {
+      case GameScreen::START:
+      {
+        if (IsKeyDown(KEY_SPACE))
+        {
           currentScreen = GameScreen::GAME;
         }
-      } break;
-      case GameScreen::GAME: {
+      }
+      break;
+      case GameScreen::GAME:
+      {
         ball.x += ball.speedX * deltaTime;
         ball.y += ball.speedY * deltaTime;
         UpdatePaddle(&leftPaddle, &rightPaddle, deltaTime);
         CheckCollision(&ball, &leftPaddle, &rightPaddle, leftPlayerPoints, rightPlayerPoints,
                        screenWidth, screenHeight);
 
-        if (rightPlayerPoints == 3 || leftPlayerPoints == 3) {
+        if (rightPlayerPoints == 3 || leftPlayerPoints == 3)
+        {
           currentScreen = GameScreen::END;
         }
-      } break;
-      case GameScreen::END: {
-        if (IsKeyDown(KEY_SPACE)) {
+      }
+      break;
+      case GameScreen::END:
+      {
+        if (IsKeyDown(KEY_SPACE))
+        {
           ball.x = GetScreenWidth() / 2;
           ball.y = 0;
           ball.speedX = ballBaseSpeedX;
@@ -112,28 +138,37 @@ int main(int argc, char* argv[]) {
           rightPlayerPoints = 0;
           currentScreen = GameScreen::GAME;
         }
-      } break;
+      }
+      break;
     }
     // draw
     ClearBackground(BLACK);
-    switch (currentScreen) {
-      case GameScreen::START: {
+    switch (currentScreen)
+    {
+      case GameScreen::START:
+      {
         DrawStartScreen(screenWidth, screenHeight, debugMode);
-      } break;
-      case GameScreen::GAME: {
+      }
+      break;
+      case GameScreen::GAME:
+      {
         ball.Draw();
         leftPaddle.Draw();
         rightPaddle.Draw();
         DrawPlayerPoints(leftPlayerPoints, rightPlayerPoints);
         DrawMidLine(screenWidth, screenHeight);
 
-        if (debugMode) {
+        if (debugMode)
+        {
           DrawDebugText(ball, leftPaddle.x, leftPaddle.y, rightPaddle.x, rightPaddle.y);
         }
-      } break;
-      case GameScreen::END: {
+      }
+      break;
+      case GameScreen::END:
+      {
         DrawEndScreen(rightPlayerPoints, leftPlayerPoints, screenWidth, screenHeight);
-      } break;
+      }
+      break;
     }
     EndDrawing();
   }
@@ -143,7 +178,8 @@ int main(int argc, char* argv[]) {
   return 0;
 }
 
-void DrawStartScreen(int screenWidth, int screenHeight, bool debugMode) {
+void DrawStartScreen(int screenWidth, int screenHeight, bool debugMode)
+{
   const char* title = "PONG";
   int titleWidth = MeasureText(title, 100);
   DrawText(title, screenWidth / 2 - titleWidth / 2, 100, 100, WHITE);
@@ -152,13 +188,17 @@ void DrawStartScreen(int screenWidth, int screenHeight, bool debugMode) {
   int playTextWidth = MeasureText(playText, 40);
 
   double timeSinceInit = GetTime();
-  if (int(timeSinceInit) % 2 == 0) {
+  if (int(timeSinceInit) % 2 == 0)
+  {
     DrawText(playText, screenWidth / 2 - playTextWidth / 2, screenHeight / 2, 40, WHITE);
-  } else {
+  }
+  else
+  {
     DrawText(playText, screenWidth / 2 - playTextWidth / 2, screenHeight / 2, 40, GRAY);
   }
 
-  if (debugMode) {
+  if (debugMode)
+  {
     const char* debugModeText = "DEBUG MODE ENABLED";
     int debugModeTextWidth = MeasureText(debugModeText, 20);
     DrawText("DEBUG MODE ENABLED", screenWidth / 2 - debugModeTextWidth / 2, 100 + 80, 20, GREEN);
@@ -166,44 +206,60 @@ void DrawStartScreen(int screenWidth, int screenHeight, bool debugMode) {
 }
 
 void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& leftPlayerPoints,
-                    int& rightPlayerPoints, int screenWidth, int screenHeight) {
-  if (ball->y < 0) {
+                    int& rightPlayerPoints, int screenWidth, int screenHeight)
+{
+  if (ball->y < 0)
+  {
     ball->speedY *= -1;
   }
-  if (ball->y > screenHeight) {
+  if (ball->y > screenHeight)
+  {
     ball->speedY *= -1;
   }
 
-  if (CheckCollisionCircleRec(Vector2{ball->x, ball->y}, ball->radius, leftPaddle->GetRect())) {
-    if (ball->speedX < 0) {
+  if (CheckCollisionCircleRec(Vector2{ball->x, ball->y}, ball->radius, leftPaddle->GetRect()))
+  {
+    if (ball->speedX < 0)
+    {
       ball->speedX *= -1.1f;
-      if (ball->y - leftPaddle->y > 0) {
+      if (ball->y - leftPaddle->y > 0)
+      {
         ball->speedY = 250;
-      } else {
+      }
+      else
+      {
         ball->speedY = -250;
       }
-      if (leftPaddle->height > 10) {
+      if (leftPaddle->height > 10)
+      {
         leftPaddle->height -= 5;
         rightPaddle->height -= 5;
       }
     }
   }
 
-  if (CheckCollisionCircleRec(Vector2{ball->x, ball->y}, ball->radius, rightPaddle->GetRect())) {
-    if (ball->speedX > 0) {
+  if (CheckCollisionCircleRec(Vector2{ball->x, ball->y}, ball->radius, rightPaddle->GetRect()))
+  {
+    if (ball->speedX > 0)
+    {
       ball->speedX *= -1.1f;
-      if (ball->y - rightPaddle->y > 0) {
+      if (ball->y - rightPaddle->y > 0)
+      {
         ball->speedY = 250;
-      } else {
+      }
+      else
+      {
         ball->speedY = -250;
       }
-      if (leftPaddle->height > 10) {
+      if (leftPaddle->height > 10)
+      {
         leftPaddle->height -= 5;
         rightPaddle->height -= 5;
       }
     }
   }
-  if (ball->x < 0) {
+  if (ball->x < 0)
+  {
     rightPlayerPoints++;
     ball->x = screenWidth / 2;
     ball->y = 0;
@@ -216,7 +272,8 @@ void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& le
     rightPaddle->y = screenHeight / 2;
   }
 
-  if (ball->x > screenWidth) {
+  if (ball->x > screenWidth)
+  {
     leftPlayerPoints++;
     ball->x = screenWidth / 2;
     ball->y = 0;
@@ -230,7 +287,8 @@ void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& le
   }
 }
 
-void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints) {
+void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints)
+{
   int leftPlayerPointTextWidth = MeasureText(TextFormat("%i", leftPlayerPoints), 100);
   DrawText(TextFormat("%i", leftPlayerPoints),
            GetScreenWidth() / 2 - 200 - leftPlayerPointTextWidth / 2, 50, 100, WHITE);
@@ -240,36 +298,49 @@ void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints) {
            GetScreenWidth() / 2 + 200 - rightPlayerPointTextWidth / 2, 50, 100, WHITE);
 }
 
-void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime) {
+void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime)
+{
   // left paddle
-  if (IsKeyDown(KEY_W)) {
-    if (leftPaddle->y >= 0 + leftPaddle->height / 2) {
+  if (IsKeyDown(KEY_W))
+  {
+    if (leftPaddle->y >= 0 + leftPaddle->height / 2)
+    {
       leftPaddle->y -= leftPaddle->speedY * deltaTime;
     }
   }
-  if (IsKeyDown(KEY_S)) {
-    if (leftPaddle->y <= GetScreenHeight() - leftPaddle->height / 2) {
+  if (IsKeyDown(KEY_S))
+  {
+    if (leftPaddle->y <= GetScreenHeight() - leftPaddle->height / 2)
+    {
       leftPaddle->y += leftPaddle->speedY * deltaTime;
     }
   }
   // right paddle
-  if (IsKeyDown(KEY_UP)) {
-    if (rightPaddle->y >= 0 + rightPaddle->height / 2) {
+  if (IsKeyDown(KEY_UP))
+  {
+    if (rightPaddle->y >= 0 + rightPaddle->height / 2)
+    {
       rightPaddle->y -= rightPaddle->speedY * deltaTime;
     }
   }
-  if (IsKeyDown(KEY_DOWN)) {
-    if (rightPaddle->y <= GetScreenHeight() - rightPaddle->height / 2) {
+  if (IsKeyDown(KEY_DOWN))
+  {
+    if (rightPaddle->y <= GetScreenHeight() - rightPaddle->height / 2)
+    {
       rightPaddle->y += rightPaddle->speedY * deltaTime;
     }
   }
 }
 
-void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth, int screenHeight) {
+void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth, int screenHeight)
+{
   const char* winnerText = nullptr;
-  if (rightPlayerPoints == 3) {
+  if (rightPlayerPoints == 3)
+  {
     winnerText = "Right Player Wins!";
-  } else {
+  }
+  else
+  {
     winnerText = "Left Player Wins!";
   }
   int winnerTextWidth = MeasureText(winnerText, 60);
@@ -278,15 +349,18 @@ void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth,
   double timeSinceInit = GetTime();
   const char* replayText = "PRESS [SPACE] TO REPLAY";
   int replayTextWidth = MeasureText(replayText, 40);
-  if (int(timeSinceInit) % 2 == 0) {
+  if (int(timeSinceInit) % 2 == 0)
+  {
     DrawText(replayText, screenWidth / 2 - replayTextWidth / 2, screenHeight / 2, 40, WHITE);
-  } else {
+  }
+  else
+  {
     DrawText(replayText, screenWidth / 2 - replayTextWidth / 2, screenHeight / 2, 40, GRAY);
   }
 }
 
-void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX,
-                   int rightPaddleY) {
+void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX, int rightPaddleY)
+{
   DrawFPS(0, 0);
 
   std::string ballPosDebug =
@@ -306,8 +380,10 @@ void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX
   DrawText(getFrameTime.c_str(), 0, 40, 14, GREEN);
 }
 
-void DrawMidLine(int screenWidth, int screenHeight) {
-  for (int y = 0; y < screenHeight; y += 55) {
+void DrawMidLine(int screenWidth, int screenHeight)
+{
+  for (int y = 0; y < screenHeight; y += 55)
+  {
     DrawRectangle(screenWidth / 2 - 2, y, 4, 50, WHITE);
   }
 }
