@@ -1,3 +1,6 @@
+#include <ball.h>
+#include <paddle.h>
+
 #include <iostream>
 
 #include "raylib.h"
@@ -9,43 +12,11 @@ typedef enum GameScreen
   END
 } GameScreen;
 
-struct Ball
-{
-  float x, y;
-  float speedX, speedY;
-  float radius;
-
-  void Draw()
-  {
-    DrawCircle(int(x), int(y), radius, WHITE);
-  }
-};
-
-struct Paddle
-{
-  float x, y;
-  float speedY;
-  float width, height;
-
-  Rectangle GetRect()
-  {
-    //                  centerX        centerY
-    return Rectangle{x - width / 2, y - height / 2, width, height};
-  }
-
-  void Draw()
-  {
-    DrawRectangleRec(GetRect(), WHITE);
-  }
-};
-
 void DrawStartScreen(int screenWidth, int screenHeight, bool debugMode);
-void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& leftPlayerPoints,
-                    int& rightPlayerPoints, int screenWidth, int screenHeight);
 void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints);
-void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime);
+void UpdatePaddle(Paddle& leftPaddle, Paddle& rightPaddle, float deltaTime);
 void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth, int screenHeight);
-void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX, int rightPaddleY);
+void DrawDebugText(Ball& ball, Paddle& leftPaddle, Paddle& rightPaddle);
 void DrawMidLine(int screenWidth, int screenHeight);
 
 int main(int argc, char* argv[])
@@ -66,29 +37,11 @@ int main(int argc, char* argv[])
   int rightPlayerPoints = 0;
 
   // init ball
-  const int ballBaseSpeedX = 400;
-  const int ballBaseSpeedY = 350;
-  Ball ball;
-  ball.x = screenWidth / 2.0f;
-  ball.y = 0;
-  ball.radius = 5;
-  ball.speedX = ballBaseSpeedX;
-  ball.speedY = ballBaseSpeedY;
+  Ball ball(screenWidth, screenHeight);
 
-  // init left paddle
-  Paddle leftPaddle;
-  leftPaddle.x = 50;
-  leftPaddle.y = GetScreenHeight() / 2;
-  leftPaddle.width = 10;
-  leftPaddle.height = 100;
-  leftPaddle.speedY = 500;
-  // init right paddle
-  Paddle rightPaddle;
-  rightPaddle.x = GetScreenWidth() - 50;
-  rightPaddle.y = GetScreenHeight() / 2;
-  rightPaddle.width = 10;
-  rightPaddle.height = 100;
-  rightPaddle.speedY = 500;
+  // init paddles
+  Paddle leftPaddle(screenWidth, screenHeight, 50);
+  Paddle rightPaddle(screenWidth, screenHeight, screenWidth - 50);
 
   // main loop
   while (!WindowShouldClose())
@@ -108,11 +61,9 @@ int main(int argc, char* argv[])
       break;
       case GameScreen::GAME:
       {
-        ball.x += ball.speedX * deltaTime;
-        ball.y += ball.speedY * deltaTime;
-        UpdatePaddle(&leftPaddle, &rightPaddle, deltaTime);
-        CheckCollision(&ball, &leftPaddle, &rightPaddle, leftPlayerPoints, rightPlayerPoints,
-                       screenWidth, screenHeight);
+        ball.Move(deltaTime);
+        ball.CheckCollisions(leftPaddle, rightPaddle, rightPlayerPoints, leftPlayerPoints);
+        UpdatePaddle(leftPaddle, rightPaddle, deltaTime);
 
         if (rightPlayerPoints == 3 || leftPlayerPoints == 3)
         {
@@ -124,16 +75,9 @@ int main(int argc, char* argv[])
       {
         if (IsKeyDown(KEY_SPACE))
         {
-          ball.x = GetScreenWidth() / 2;
-          ball.y = 0;
-          ball.speedX = ballBaseSpeedX;
-          ball.speedY = ballBaseSpeedY;
-          leftPaddle.x = 50;
-          leftPaddle.y = GetScreenHeight() / 2;
-          leftPaddle.height = 100;
-          rightPaddle.x = GetScreenWidth() - 50;
-          rightPaddle.y = GetScreenHeight() / 2;
-          rightPaddle.height = 100;
+          ball.Reset(screenWidth);
+          leftPaddle.Reset(50);
+          rightPaddle.Reset(screenWidth - 50);
           leftPlayerPoints = 0;
           rightPlayerPoints = 0;
           currentScreen = GameScreen::GAME;
@@ -160,7 +104,7 @@ int main(int argc, char* argv[])
 
         if (debugMode)
         {
-          DrawDebugText(ball, leftPaddle.x, leftPaddle.y, rightPaddle.x, rightPaddle.y);
+          DrawDebugText(ball, leftPaddle, rightPaddle);
         }
       }
       break;
@@ -205,88 +149,6 @@ void DrawStartScreen(int screenWidth, int screenHeight, bool debugMode)
   }
 }
 
-void CheckCollision(Ball* ball, Paddle* leftPaddle, Paddle* rightPaddle, int& leftPlayerPoints,
-                    int& rightPlayerPoints, int screenWidth, int screenHeight)
-{
-  if (ball->y < 0)
-  {
-    ball->speedY *= -1;
-  }
-  if (ball->y > screenHeight)
-  {
-    ball->speedY *= -1;
-  }
-
-  if (CheckCollisionCircleRec(Vector2{ball->x, ball->y}, ball->radius, leftPaddle->GetRect()))
-  {
-    if (ball->speedX < 0)
-    {
-      ball->speedX *= -1.1f;
-      if (ball->y - leftPaddle->y > 0)
-      {
-        ball->speedY = 250;
-      }
-      else
-      {
-        ball->speedY = -250;
-      }
-      if (leftPaddle->height > 10)
-      {
-        leftPaddle->height -= 5;
-        rightPaddle->height -= 5;
-      }
-    }
-  }
-
-  if (CheckCollisionCircleRec(Vector2{ball->x, ball->y}, ball->radius, rightPaddle->GetRect()))
-  {
-    if (ball->speedX > 0)
-    {
-      ball->speedX *= -1.1f;
-      if (ball->y - rightPaddle->y > 0)
-      {
-        ball->speedY = 250;
-      }
-      else
-      {
-        ball->speedY = -250;
-      }
-      if (leftPaddle->height > 10)
-      {
-        leftPaddle->height -= 5;
-        rightPaddle->height -= 5;
-      }
-    }
-  }
-  if (ball->x < 0)
-  {
-    rightPlayerPoints++;
-    ball->x = screenWidth / 2;
-    ball->y = 0;
-    ball->speedX = 300;
-    ball->speedY = 300;
-
-    leftPaddle->x = 50;
-    leftPaddle->y = screenHeight / 2;
-    rightPaddle->x = screenWidth - 50;
-    rightPaddle->y = screenHeight / 2;
-  }
-
-  if (ball->x > screenWidth)
-  {
-    leftPlayerPoints++;
-    ball->x = screenWidth / 2;
-    ball->y = 0;
-    ball->speedX = -300;
-    ball->speedY = 300;
-
-    leftPaddle->x = 50;
-    leftPaddle->y = screenHeight / 2;
-    rightPaddle->x = screenWidth - 50;
-    rightPaddle->y = screenHeight / 2;
-  }
-}
-
 void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints)
 {
   int leftPlayerPointTextWidth = MeasureText(TextFormat("%i", leftPlayerPoints), 100);
@@ -298,37 +160,25 @@ void DrawPlayerPoints(int leftPlayerPoints, int rightPlayerPoints)
            GetScreenWidth() / 2 + 200 - rightPlayerPointTextWidth / 2, 50, 100, WHITE);
 }
 
-void UpdatePaddle(Paddle* leftPaddle, Paddle* rightPaddle, float deltaTime)
+void UpdatePaddle(Paddle& leftPaddle, Paddle& rightPaddle, float deltaTime)
 {
   // left paddle
   if (IsKeyDown(KEY_W))
   {
-    if (leftPaddle->y >= 0 + leftPaddle->height / 2)
-    {
-      leftPaddle->y -= leftPaddle->speedY * deltaTime;
-    }
+    leftPaddle.MoveUp(deltaTime);
   }
   if (IsKeyDown(KEY_S))
   {
-    if (leftPaddle->y <= GetScreenHeight() - leftPaddle->height / 2)
-    {
-      leftPaddle->y += leftPaddle->speedY * deltaTime;
-    }
+    leftPaddle.MoveDown(deltaTime);
   }
   // right paddle
   if (IsKeyDown(KEY_UP))
   {
-    if (rightPaddle->y >= 0 + rightPaddle->height / 2)
-    {
-      rightPaddle->y -= rightPaddle->speedY * deltaTime;
-    }
+    rightPaddle.MoveUp(deltaTime);
   }
   if (IsKeyDown(KEY_DOWN))
   {
-    if (rightPaddle->y <= GetScreenHeight() - rightPaddle->height / 2)
-    {
-      rightPaddle->y += rightPaddle->speedY * deltaTime;
-    }
+    rightPaddle.MoveDown(deltaTime);
   }
 }
 
@@ -359,21 +209,23 @@ void DrawEndScreen(int rightPlayerPoints, int leftPlayerPoints, int screenWidth,
   }
 }
 
-void DrawDebugText(Ball ball, int leftPaddleX, int leftPaddleY, int rightPaddleX, int rightPaddleY)
+void DrawDebugText(Ball& ball, Paddle& leftPaddle, Paddle& rightPaddle)
 {
   DrawFPS(0, 0);
 
   std::string ballPosDebug =
-      "x: " + std::to_string(int(ball.x)) + " , y: " + std::to_string(int(ball.y));
-  DrawText(ballPosDebug.c_str(), int(ball.x) + 10, int(ball.y) + 10, 14, GREEN);
+      "x: " + std::to_string(int(ball.GetXPos())) + " , y: " + std::to_string(int(ball.GetYPos()));
+  DrawText(ballPosDebug.c_str(), int(ball.GetXPos()) + 10, int(ball.GetYPos()) + 10, 14, GREEN);
 
-  std::string ballSpeedDebug = "ball.speed x: " + std::to_string(int(ball.speedX)) +
-                               " , ball.speed y: " + std::to_string(int(ball.speedY));
+  std::string ballSpeedDebug = "ball.speed x: " + std::to_string(int(ball.GetSpeedX())) +
+                               " , ball.speed y: " + std::to_string(int(ball.GetSpeedY()));
   DrawText(ballSpeedDebug.c_str(), 0, 20, 14, GREEN);
 
-  DrawText(TextFormat("x: %i, y: %i", leftPaddleX, leftPaddleY), leftPaddleX + 20, leftPaddleY, 14,
+
+  std::cout << leftPaddle.GetYPos() << std::endl;
+  DrawText(TextFormat("x: %i, y: %i", int(leftPaddle.GetXPos()), int(leftPaddle.GetYPos())), int(leftPaddle.GetXPos()) + 20, int(leftPaddle.GetYPos()), 14,
            GREEN);
-  DrawText(TextFormat("x: %i, y: %i", rightPaddleX, rightPaddleY), rightPaddleX - 100, rightPaddleY,
+  DrawText(TextFormat("x: %i, y: %i", int(rightPaddle.GetXPos()), int(rightPaddle.GetYPos())), int(rightPaddle.GetXPos()) - 100, int(rightPaddle.GetYPos()),
            14, GREEN);
 
   std::string getFrameTime = "GetFrameTime(): " + std::to_string(GetFrameTime());

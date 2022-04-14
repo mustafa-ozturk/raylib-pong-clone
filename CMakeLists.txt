@@ -7,7 +7,9 @@ project(main)
 include_directories(include)
 
 set(SOURCES 
-    src/main.cpp 
+    src/main.cpp
+    src/ball.cpp
+    src/paddle.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
