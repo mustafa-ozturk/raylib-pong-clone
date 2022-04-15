@@ -2,13 +2,13 @@ modified clone of classic pong using raylib and c++
 
 ```bash
 # run cmake
-./run-cmake 
+./run-cmake.sh
 
 # compile and run the game in debug mode
-./debug
+./debug-game.sh
 
 # compile and run the game
-./run
+./run-game.sh
 ```
 
 demo: (*not accurate fps*)
