@@ -4,7 +4,6 @@ Game::Game(int screenWidth, int screenHeight, bool debugMode)
     : m_leftPaddle(screenWidth, screenHeight, 50),
       m_rightPaddle(screenWidth, screenHeight, screenWidth - 50),
       m_ball(screenWidth, screenHeight)
-
 {
   m_screenWidth = screenWidth;
   m_screenHeight = screenHeight;
@@ -75,27 +74,15 @@ void Game::m_InputUpdate(float deltaTime)
 
 void Game::m_GameUpdate(float deltaTime)
 {
-  switch (m_currentScreen)
+  if (m_currentScreen == GameScreen::GAME)
   {
-    case GameScreen::START:
-    {
-    }
-    break;
-    case GameScreen::GAME:
-    {
-      m_ball.Move(deltaTime);
-      m_ball.CheckCollisions(m_leftPaddle, m_rightPaddle, m_rightPlayerPoints, m_leftPlayerPoints);
+    m_ball.Move(deltaTime);
+    m_ball.CheckCollisions(m_leftPaddle, m_rightPaddle, m_rightPlayerPoints, m_leftPlayerPoints);
 
-      if (m_rightPlayerPoints == 3 || m_leftPlayerPoints == 3)
-      {
-        m_currentScreen = GameScreen::END;
-      }
-    }
-    break;
-    case GameScreen::END:
+    if (m_rightPlayerPoints == 3 || m_leftPlayerPoints == 3)
     {
+      m_currentScreen = GameScreen::END;
     }
-    break;
   }
 }
 
