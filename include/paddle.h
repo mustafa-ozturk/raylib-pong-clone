@@ -1,6 +1,9 @@
 #pragma once
 #include <raylib.h>
 
+// without this struct: error: ‘Rectangle’ does not name a type
+struct Rectangle; // why ? 
+
 class Paddle
 {
  private:
@@ -15,10 +18,10 @@ class Paddle
  public:
   Paddle(int screenWidth, int screenHeight, int xPos);
 
+  Rectangle GetRect();
   float GetYPos();
   float GetXPos();
   int GetHeight();
-  Rectangle GetRect();
 
   void Draw();
   void MoveUp(float deltaTime);

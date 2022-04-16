@@ -26,8 +26,8 @@ int Paddle::GetHeight()
 Rectangle Paddle::GetRect()
 {
   return Rectangle{m_x - m_width / 2,   // centerX
-                   m_y - m_height / 2,  // centerY
-                   static_cast<float>(m_width), static_cast<float>(m_height)};
+                           m_y - m_height / 2,  // centerY
+                           static_cast<float>(m_width), static_cast<float>(m_height)};
 }
 
 void Paddle::Draw()

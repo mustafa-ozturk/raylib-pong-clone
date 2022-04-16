@@ -10,6 +10,7 @@ set(SOURCES
     src/main.cpp
     src/ball.cpp
     src/paddle.cpp
+    src/game.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
