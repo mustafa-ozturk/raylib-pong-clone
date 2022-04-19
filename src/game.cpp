@@ -130,7 +130,7 @@ void Game::m_DrawStartScreen()
   int playTextWidth = Raylib::MeasureText(playText, 40);
 
   double timeSinceInit = Raylib::GetTime();
-  if (int(timeSinceInit) % 2 == 0)
+  if (static_cast<int>(timeSinceInit) % 2 == 0)
   {
     Raylib::DrawText(playText, m_screenWidth / 2 - playTextWidth / 2, m_screenHeight / 2, 40,
                      Raylib::WHITE);
@@ -167,7 +167,7 @@ void Game::m_DrawEndScreen()
   double timeSinceInit = Raylib::GetTime();
   const char* replayText = "PRESS [SPACE] TO REPLAY";
   int replayTextWidth = Raylib::MeasureText(replayText, 40);
-  if (int(timeSinceInit) % 2 == 0)
+  if (static_cast<int>(timeSinceInit) % 2 == 0)
   {
     Raylib::DrawText(replayText, m_screenWidth / 2 - replayTextWidth / 2, m_screenHeight / 2, 40,
                      Raylib::WHITE);
@@ -204,22 +204,22 @@ void Game::m_DrawDebugText()
 {
   Raylib::DrawFPS(0, 0);
 
-  std::string ballPosDebug = "x: " + std::to_string(int(m_ball.GetXPos())) +
-                             " , y: " + std::to_string(int(m_ball.GetYPos()));
-  Raylib::DrawText(ballPosDebug.c_str(), int(m_ball.GetXPos()) + 10, int(m_ball.GetYPos()) + 10, 14,
+  std::string ballPosDebug = "x: " + std::to_string(static_cast<int>(m_ball.GetXPos())) +
+                             " , y: " + std::to_string(static_cast<int>(m_ball.GetYPos()));
+  Raylib::DrawText(ballPosDebug.c_str(), static_cast<int>(m_ball.GetXPos()) + 10, static_cast<int>(m_ball.GetYPos()) + 10, 14,
                    Raylib::GREEN);
 
-  std::string ballSpeedDebug = "ball.speed x: " + std::to_string(int(m_ball.GetSpeedX())) +
-                               " , ball.speed y: " + std::to_string(int(m_ball.GetSpeedY()));
+  std::string ballSpeedDebug = "ball.speed x: " + std::to_string(static_cast<int>(m_ball.GetSpeedX())) +
+                               " , ball.speed y: " + std::to_string(static_cast<int>(m_ball.GetSpeedY()));
   Raylib::DrawText(ballSpeedDebug.c_str(), 0, 20, 14, Raylib::GREEN);
 
   std::cout << m_leftPaddle.GetYPos() << std::endl;
   Raylib::DrawText(
-      Raylib::TextFormat("x: %i, y: %i", int(m_leftPaddle.GetXPos()), int(m_leftPaddle.GetYPos())),
-      int(m_leftPaddle.GetXPos()) + 20, int(m_leftPaddle.GetYPos()), 14, Raylib::GREEN);
-  Raylib::DrawText(Raylib::TextFormat("x: %i, y: %i", int(m_rightPaddle.GetXPos()),
-                                      int(m_rightPaddle.GetYPos())),
-                   int(m_rightPaddle.GetXPos()) - 100, int(m_rightPaddle.GetYPos()), 14,
+      Raylib::TextFormat("x: %i, y: %i", static_cast<int>(m_leftPaddle.GetXPos()), static_cast<int>(m_leftPaddle.GetYPos())),
+      static_cast<int>(m_leftPaddle.GetXPos()) + 20, static_cast<int>(m_leftPaddle.GetYPos()), 14, Raylib::GREEN);
+  Raylib::DrawText(Raylib::TextFormat("x: %i, y: %i", static_cast<int>(m_rightPaddle.GetXPos()),
+                                      static_cast<int>(m_rightPaddle.GetYPos())),
+                   static_cast<int>(m_rightPaddle.GetXPos()) - 100, static_cast<int>(m_rightPaddle.GetYPos()), 14,
                    Raylib::GREEN);
 
   std::string getFrameTime = "GetFrameTime(): " + std::to_string(Raylib::GetFrameTime());

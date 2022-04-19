@@ -29,7 +29,7 @@ float Ball::GetSpeedY()
 
 void Ball::Draw()
 {
-  DrawCircle(int(m_x), int(m_y), m_radius, WHITE);
+  DrawCircle(static_cast<int>(m_x), static_cast<int>(m_y), m_radius, WHITE);
 }
 
 void Ball::Move(float deltaTime)
