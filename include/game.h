@@ -1,10 +1,7 @@
 #pragma once
 #include <string>
 #include <iostream>
-namespace Raylib
-{
 #include <raylib.h>
-}
 #include <paddle.h>
 #include <ball.h>
 
@@ -15,6 +12,7 @@ typedef enum GameScreen
   GAME,
   END
 } GameScreen;
+
 
 class Game
 {
@@ -28,7 +26,8 @@ class Game
   Paddle m_leftPaddle;
   Paddle m_rightPaddle;
   Ball m_ball;
-
+  Shader m_redShader;
+  Shader m_blueShader;
 
   void m_InputUpdate(float deltaTime);
   void m_GameUpdate(float deltaTime);

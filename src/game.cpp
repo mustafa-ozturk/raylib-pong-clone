@@ -12,16 +12,19 @@ Game::Game(int screenWidth, int screenHeight, bool debugMode)
 
 void Game::Run()
 {
-  Raylib::InitWindow(m_screenWidth, m_screenHeight, "raylib pong clone");
-  Raylib::SetTargetFPS(60);
-  while (!Raylib::WindowShouldClose())
+  InitWindow(m_screenWidth, m_screenHeight, "raylib pong clone");
+  SetTargetFPS(60);
+  // Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
+  m_redShader = LoadShader(0, "../../shader/red.fs");
+  m_blueShader = LoadShader(0, "../../shader/blue.fs");
+  while (!WindowShouldClose())
   {
-    float deltaTime = Raylib::GetFrameTime();
+    float deltaTime = GetFrameTime();
     Game::m_InputUpdate(deltaTime);
     Game::m_GameUpdate(deltaTime);
     Game::m_Draw(deltaTime);
   }
-  Raylib::CloseWindow();
+  CloseWindow();
 }
 
 void Game::m_InputUpdate(float deltaTime)
@@ -30,7 +33,7 @@ void Game::m_InputUpdate(float deltaTime)
   {
     case GameScreen::START:
     {
-      if (Raylib::IsKeyDown(Raylib::KEY_SPACE))
+      if (IsKeyDown(KEY_SPACE))
       {
         m_currentScreen = GameScreen::GAME;
       }
@@ -38,19 +41,19 @@ void Game::m_InputUpdate(float deltaTime)
     break;
     case GameScreen::GAME:
     {
-      if (Raylib::IsKeyDown(Raylib::KEY_W))
+      if (IsKeyDown(KEY_W))
       {
         m_leftPaddle.MoveUp(deltaTime);
       }
-      if (Raylib::IsKeyDown(Raylib::KEY_S))
+      if (IsKeyDown(KEY_S))
       {
         m_leftPaddle.MoveDown(deltaTime);
       }
-      if (Raylib::IsKeyDown(Raylib::KEY_UP))
+      if (IsKeyDown(KEY_UP))
       {
         m_rightPaddle.MoveUp(deltaTime);
       }
-      if (Raylib::IsKeyDown(Raylib::KEY_DOWN))
+      if (IsKeyDown(KEY_DOWN))
       {
         m_rightPaddle.MoveDown(deltaTime);
       }
@@ -58,7 +61,7 @@ void Game::m_InputUpdate(float deltaTime)
     break;
     case GameScreen::END:
     {
-      if (Raylib::IsKeyDown(Raylib::KEY_SPACE))
+      if (IsKeyDown(KEY_SPACE))
       {
         m_ball.Reset(m_screenWidth);
         m_leftPaddle.Reset(50);
@@ -88,8 +91,8 @@ void Game::m_GameUpdate(float deltaTime)
 
 void Game::m_Draw(float deltaTime)
 {
-  Raylib::BeginDrawing();
-  ClearBackground(Raylib::BLACK);
+  BeginDrawing();
+  ClearBackground(BLACK);
   switch (m_currentScreen)
   {
     case GameScreen::START:
@@ -100,8 +103,13 @@ void Game::m_Draw(float deltaTime)
     case GameScreen::GAME:
     {
       m_ball.Draw();
-      m_leftPaddle.Draw();
+
+      BeginShaderMode(m_redShader);
       m_rightPaddle.Draw();
+      EndShaderMode();
+      BeginShaderMode(m_blueShader);
+      m_leftPaddle.Draw();
+      EndShaderMode();
       m_DrawPlayerPoints();
       m_DrawMidLine();
 
@@ -117,36 +125,36 @@ void Game::m_Draw(float deltaTime)
     }
     break;
   }
-  Raylib::EndDrawing();
+  EndDrawing();
 }
 
 void Game::m_DrawStartScreen()
 {
   const char* title = "PONG";
-  int titleWidth = Raylib::MeasureText(title, 100);
-  Raylib::DrawText(title, m_screenWidth / 2 - titleWidth / 2, 100, 100, Raylib::WHITE);
+  int titleWidth = MeasureText(title, 100);
+  DrawText(title, m_screenWidth / 2 - titleWidth / 2, 100, 100, WHITE);
 
   const char* playText = "PRESS [SPACE] TO PLAY";
-  int playTextWidth = Raylib::MeasureText(playText, 40);
+  int playTextWidth = MeasureText(playText, 40);
 
-  double timeSinceInit = Raylib::GetTime();
+  double timeSinceInit = GetTime();
   if (static_cast<int>(timeSinceInit) % 2 == 0)
   {
-    Raylib::DrawText(playText, m_screenWidth / 2 - playTextWidth / 2, m_screenHeight / 2, 40,
-                     Raylib::WHITE);
+    DrawText(playText, m_screenWidth / 2 - playTextWidth / 2, m_screenHeight / 2, 40,
+                     WHITE);
   }
   else
   {
-    Raylib::DrawText(playText, m_screenWidth / 2 - playTextWidth / 2, m_screenHeight / 2, 40,
-                     Raylib::GRAY);
+    DrawText(playText, m_screenWidth / 2 - playTextWidth / 2, m_screenHeight / 2, 40,
+                     GRAY);
   }
 
   if (m_debugMode)
   {
     const char* debugModeText = "DEBUG MODE ENABLED";
-    int debugModeTextWidth = Raylib::MeasureText(debugModeText, 20);
-    Raylib::DrawText("DEBUG MODE ENABLED", m_screenWidth / 2 - debugModeTextWidth / 2, 100 + 80, 20,
-                     Raylib::GREEN);
+    int debugModeTextWidth = MeasureText(debugModeText, 20);
+    DrawText("DEBUG MODE ENABLED", m_screenWidth / 2 - debugModeTextWidth / 2, 100 + 80, 20,
+                     GREEN);
   }
 }
 
@@ -161,67 +169,67 @@ void Game::m_DrawEndScreen()
   {
     winnerText = "Left Player Wins!";
   }
-  int winnerTextWidth = Raylib::MeasureText(winnerText, 60);
-  Raylib::DrawText(winnerText, m_screenWidth / 2 - winnerTextWidth / 2, 200, 60, Raylib::GREEN);
+  int winnerTextWidth = MeasureText(winnerText, 60);
+  DrawText(winnerText, m_screenWidth / 2 - winnerTextWidth / 2, 200, 60, GREEN);
 
-  double timeSinceInit = Raylib::GetTime();
+  double timeSinceInit = GetTime();
   const char* replayText = "PRESS [SPACE] TO REPLAY";
-  int replayTextWidth = Raylib::MeasureText(replayText, 40);
+  int replayTextWidth = MeasureText(replayText, 40);
   if (static_cast<int>(timeSinceInit) % 2 == 0)
   {
-    Raylib::DrawText(replayText, m_screenWidth / 2 - replayTextWidth / 2, m_screenHeight / 2, 40,
-                     Raylib::WHITE);
+    DrawText(replayText, m_screenWidth / 2 - replayTextWidth / 2, m_screenHeight / 2, 40,
+                     WHITE);
   }
   else
   {
-    Raylib::DrawText(replayText, m_screenWidth / 2 - replayTextWidth / 2, m_screenHeight / 2, 40,
-                     Raylib::GRAY);
+    DrawText(replayText, m_screenWidth / 2 - replayTextWidth / 2, m_screenHeight / 2, 40,
+                     GRAY);
   }
 }
 
 void Game::m_DrawPlayerPoints()
 {
   int leftPlayerPointTextWidth =
-      Raylib::MeasureText(Raylib::TextFormat("%i", m_leftPlayerPoints), 100);
-  Raylib::DrawText(Raylib::TextFormat("%i", m_leftPlayerPoints),
-                   m_screenWidth / 2 - 200 - leftPlayerPointTextWidth / 2, 50, 100, Raylib::WHITE);
+      MeasureText(TextFormat("%i", m_leftPlayerPoints), 100);
+  DrawText(TextFormat("%i", m_leftPlayerPoints),
+                   m_screenWidth / 2 - 200 - leftPlayerPointTextWidth / 2, 50, 100, WHITE);
 
   int rightPlayerPointTextWidth =
-      Raylib::MeasureText(Raylib::TextFormat("%i", m_rightPlayerPoints), 100);
-  Raylib::DrawText(Raylib::TextFormat("%i", m_rightPlayerPoints),
-                   m_screenWidth / 2 + 200 - rightPlayerPointTextWidth / 2, 50, 100, Raylib::WHITE);
+      MeasureText(TextFormat("%i", m_rightPlayerPoints), 100);
+  DrawText(TextFormat("%i", m_rightPlayerPoints),
+                   m_screenWidth / 2 + 200 - rightPlayerPointTextWidth / 2, 50, 100, WHITE);
 }
 
 void Game::m_DrawMidLine()
 {
   for (int y = 0; y < m_screenHeight; y += 55)
   {
-    Raylib::DrawRectangle(m_screenWidth / 2 - 2, y, 4, 50, Raylib::WHITE);
+    DrawRectangle(m_screenWidth / 2 - 2, y, 4, 50, WHITE);
   }
 }
 
 void Game::m_DrawDebugText()
 {
-  Raylib::DrawFPS(0, 0);
+  DrawFPS(0, 0);
 
   std::string ballPosDebug = "x: " + std::to_string(static_cast<int>(m_ball.GetXPos())) +
                              " , y: " + std::to_string(static_cast<int>(m_ball.GetYPos()));
-  Raylib::DrawText(ballPosDebug.c_str(), static_cast<int>(m_ball.GetXPos()) + 10, static_cast<int>(m_ball.GetYPos()) + 10, 14,
-                   Raylib::GREEN);
+  DrawText(ballPosDebug.c_str(), static_cast<int>(m_ball.GetXPos()) + 10, static_cast<int>(m_ball.GetYPos()) + 10, 14,
+                   GREEN);
 
   std::string ballSpeedDebug = "ball.speed x: " + std::to_string(static_cast<int>(m_ball.GetSpeedX())) +
                                " , ball.speed y: " + std::to_string(static_cast<int>(m_ball.GetSpeedY()));
-  Raylib::DrawText(ballSpeedDebug.c_str(), 0, 20, 14, Raylib::GREEN);
+  DrawText(ballSpeedDebug.c_str(), 0, 20, 14, GREEN);
 
   std::cout << m_leftPaddle.GetYPos() << std::endl;
-  Raylib::DrawText(
-      Raylib::TextFormat("x: %i, y: %i", static_cast<int>(m_leftPaddle.GetXPos()), static_cast<int>(m_leftPaddle.GetYPos())),
-      static_cast<int>(m_leftPaddle.GetXPos()) + 20, static_cast<int>(m_leftPaddle.GetYPos()), 14, Raylib::GREEN);
-  Raylib::DrawText(Raylib::TextFormat("x: %i, y: %i", static_cast<int>(m_rightPaddle.GetXPos()),
+  DrawText(
+      TextFormat("x: %i, y: %i", static_cast<int>(m_leftPaddle.GetXPos()), static_cast<int>(m_leftPaddle.GetYPos())),
+      static_cast<int>(m_leftPaddle.GetXPos()) + 20, static_cast<int>(m_leftPaddle.GetYPos()), 14, GREEN);
+  DrawText(TextFormat("x: %i, y: %i", static_cast<int>(m_rightPaddle.GetXPos()),
                                       static_cast<int>(m_rightPaddle.GetYPos())),
                    static_cast<int>(m_rightPaddle.GetXPos()) - 100, static_cast<int>(m_rightPaddle.GetYPos()), 14,
-                   Raylib::GREEN);
+                   GREEN);
 
-  std::string getFrameTime = "GetFrameTime(): " + std::to_string(Raylib::GetFrameTime());
-  Raylib::DrawText(getFrameTime.c_str(), 0, 40, 14, Raylib::GREEN);
+  std::string getFrameTime = "GetFrameTime(): " + std::to_string(GetFrameTime());
+  DrawText(getFrameTime.c_str(), 0, 40, 14, GREEN);
 }
