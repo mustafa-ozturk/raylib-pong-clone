@@ -6,16 +6,16 @@
 #include <iostream>
 #include <string>
 
-typedef enum GameScreen
-{
-  START,
-  GAME,
-  END
-} GameScreen;
-
 class Game
 {
  public:
+  typedef enum GameScreen
+  {
+    START,
+    GAME,
+    END
+  } GameScreen;
+  
   Game(const int screenWidth, const int screenHeight, const bool debugMode);
   void Run();
 
