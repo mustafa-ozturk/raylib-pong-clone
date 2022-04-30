@@ -27,7 +27,7 @@ class Ball
   int m_screenWidth = 0;
   int m_screenHeight = 0;
 
-  void m_CheckYCollision();
-  void m_CheckXCollision(int& rightPlayerPoints, int& leftPlayerPoints);
-  void m_CheckBallPaddleCollision(Paddle& leftPaddle, Paddle& rightPaddle);
+  void CheckYCollision();
+  void CheckXCollision(int& rightPlayerPoints, int& leftPlayerPoints);
+  void CheckBallPaddleCollision(Paddle& leftPaddle, Paddle& rightPaddle);
 };

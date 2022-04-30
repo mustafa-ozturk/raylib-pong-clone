@@ -46,7 +46,7 @@ void Ball::Reset(int screenWidth)
   m_speedY = 350;
 }
 
-void Ball::m_CheckYCollision()
+void Ball::CheckYCollision()
 {
   if (m_y < 0)
   {
@@ -58,7 +58,7 @@ void Ball::m_CheckYCollision()
   }
 }
 
-void Ball::m_CheckXCollision(int& rightPlayerPoints, int& leftPlayerPoints)
+void Ball::CheckXCollision(int& rightPlayerPoints, int& leftPlayerPoints)
 {
   if (m_x < 0)
   {
@@ -79,7 +79,7 @@ void Ball::m_CheckXCollision(int& rightPlayerPoints, int& leftPlayerPoints)
   }
 }
 
-void Ball::m_CheckBallPaddleCollision(Paddle& leftPaddle, Paddle& rightPaddle)
+void Ball::CheckBallPaddleCollision(Paddle& leftPaddle, Paddle& rightPaddle)
 {
   float leftPaddleYPos = leftPaddle.GetYPos();
   float leftPaddleHeight = leftPaddle.GetHeight();
@@ -132,7 +132,7 @@ void Ball::m_CheckBallPaddleCollision(Paddle& leftPaddle, Paddle& rightPaddle)
 void Ball::CheckCollisions(Paddle& leftPaddle, Paddle& rightPaddle, int& rightPlayerPoints,
                            int& leftPlayerPoints)
 {
-  m_CheckYCollision();
-  m_CheckXCollision(rightPlayerPoints, leftPlayerPoints);
-  m_CheckBallPaddleCollision(leftPaddle, rightPaddle);
+  CheckYCollision();
+  CheckXCollision(rightPlayerPoints, leftPlayerPoints);
+  CheckBallPaddleCollision(leftPaddle, rightPaddle);
 }
