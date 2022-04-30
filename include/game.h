@@ -32,13 +32,13 @@ class Game
   Shader m_redShader;
   Shader m_blueShader;
 
-  void m_InputUpdate(float deltaTime);
-  void m_GameUpdate(float deltaTime);
-  void m_Draw(float deltaTime);
+  void InputUpdate(float deltaTime);
+  void GameUpdate(float deltaTime);
+  void Draw(float deltaTime);
 
-  void m_DrawStartScreen();
-  void m_DrawPlayerPoints();
-  void m_DrawEndScreen();
-  void m_DrawMidLine();
-  void m_DrawDebugText();
+  void DrawStartScreen();
+  void DrawPlayerPoints();
+  void DrawEndScreen();
+  void DrawMidLine();
+  void DrawDebugText();
 };

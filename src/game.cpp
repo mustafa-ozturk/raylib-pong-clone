@@ -20,14 +20,14 @@ void Game::Run()
   while (!WindowShouldClose())
   {
     float deltaTime = GetFrameTime();
-    Game::m_InputUpdate(deltaTime);
-    Game::m_GameUpdate(deltaTime);
-    Game::m_Draw(deltaTime);
+    Game::InputUpdate(deltaTime);
+    Game::GameUpdate(deltaTime);
+    Game::Draw(deltaTime);
   }
   CloseWindow();
 }
 
-void Game::m_InputUpdate(float deltaTime)
+void Game::InputUpdate(float deltaTime)
 {
   switch (m_currentScreen)
   {
@@ -75,7 +75,7 @@ void Game::m_InputUpdate(float deltaTime)
   }
 }
 
-void Game::m_GameUpdate(float deltaTime)
+void Game::GameUpdate(float deltaTime)
 {
   if (m_currentScreen == GameScreen::GAME)
   {
@@ -89,7 +89,7 @@ void Game::m_GameUpdate(float deltaTime)
   }
 }
 
-void Game::m_Draw(float deltaTime)
+void Game::Draw(float deltaTime)
 {
   BeginDrawing();
   ClearBackground(BLACK);
@@ -97,7 +97,7 @@ void Game::m_Draw(float deltaTime)
   {
     case GameScreen::START:
     {
-      Game::m_DrawStartScreen();
+      Game::DrawStartScreen();
     }
     break;
     case GameScreen::GAME:
@@ -110,25 +110,25 @@ void Game::m_Draw(float deltaTime)
       BeginShaderMode(m_blueShader);
       m_leftPaddle.Draw();
       EndShaderMode();
-      m_DrawPlayerPoints();
-      m_DrawMidLine();
+      DrawPlayerPoints();
+      DrawMidLine();
 
       if (m_debugMode)
       {
-        m_DrawDebugText();
+        DrawDebugText();
       }
     }
     break;
     case GameScreen::END:
     {
-      m_DrawEndScreen();
+      DrawEndScreen();
     }
     break;
   }
   EndDrawing();
 }
 
-void Game::m_DrawStartScreen()
+void Game::DrawStartScreen()
 {
   const char* title = "PONG";
   int titleWidth = MeasureText(title, 100);
@@ -158,7 +158,7 @@ void Game::m_DrawStartScreen()
   }
 }
 
-void Game::m_DrawEndScreen()
+void Game::DrawEndScreen()
 {
   const char* winnerText = nullptr;
   if (m_rightPlayerPoints == 3)
@@ -187,7 +187,7 @@ void Game::m_DrawEndScreen()
   }
 }
 
-void Game::m_DrawPlayerPoints()
+void Game::DrawPlayerPoints()
 {
   int leftPlayerPointTextWidth =
       MeasureText(TextFormat("%i", m_leftPlayerPoints), 100);
@@ -200,7 +200,7 @@ void Game::m_DrawPlayerPoints()
                    m_screenWidth / 2 + 200 - rightPlayerPointTextWidth / 2, 50, 100, WHITE);
 }
 
-void Game::m_DrawMidLine()
+void Game::DrawMidLine()
 {
   for (int y = 0; y < m_screenHeight; y += 55)
   {
@@ -208,7 +208,7 @@ void Game::m_DrawMidLine()
   }
 }
 
-void Game::m_DrawDebugText()
+void Game::DrawDebugText()
 {
   DrawFPS(0, 0);
 
