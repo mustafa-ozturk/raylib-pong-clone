@@ -16,7 +16,7 @@ typedef enum GameScreen
 class Game
 {
  public:
-  Game(int screenWidth, int screenHeight, bool debugMode);
+  Game(const int screenWidth, const int screenHeight, const bool debugMode);
   void Run();
 
  private:
@@ -32,9 +32,9 @@ class Game
   Shader m_redShader;
   Shader m_blueShader;
 
-  void InputUpdate(float deltaTime);
-  void GameUpdate(float deltaTime);
-  void Draw(float deltaTime);
+  void InputUpdate(const float deltaTime);
+  void GameUpdate(const float deltaTime);
+  void Draw(const float deltaTime);
 
   void DrawStartScreen();
   void DrawPlayerPoints();

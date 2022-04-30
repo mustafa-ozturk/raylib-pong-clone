@@ -1,6 +1,6 @@
 #include <paddle.h>
 
-Paddle::Paddle(int screenWidth, int screenHeight, int xPos)
+Paddle::Paddle(const int screenWidth, const int screenHeight, const int xPos)
 {
   m_screenWidth = screenWidth;
   m_screenHeight = screenHeight;
@@ -35,7 +35,7 @@ void Paddle::Draw()
   DrawRectangleRec(GetRect(), WHITE);
 }
 
-void Paddle::MoveUp(float deltaTime)
+void Paddle::MoveUp(const float deltaTime)
 {
   if (m_y >= 0 + m_height / 2)
   {
@@ -43,7 +43,7 @@ void Paddle::MoveUp(float deltaTime)
   }
 }
 
-void Paddle::MoveDown(float deltaTime)
+void Paddle::MoveDown(const float deltaTime)
 {
   if (m_y <= m_screenHeight - m_height / 2)
   {
@@ -51,12 +51,12 @@ void Paddle::MoveDown(float deltaTime)
   }
 }
 
-void Paddle::ShrinkHeight(int amount)
+void Paddle::ShrinkHeight(const int amount)
 {
   m_height -= amount;
 }
 
-void Paddle::Reset(int xPos)
+void Paddle::Reset(const int xPos)
 {
   m_x = xPos;
   m_y = m_screenHeight / 2;

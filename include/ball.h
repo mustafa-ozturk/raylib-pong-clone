@@ -5,7 +5,7 @@
 class Ball
 {
  public:
-  Ball(int screenWidth, int screenHeight);
+  Ball(const int screenWidth, const int screenHeight);
 
   float GetXPos() const;
   float GetYPos() const;
@@ -13,8 +13,8 @@ class Ball
   float GetSpeedY() const;
 
   void Draw();
-  void Move(float deltaTime);
-  void Reset(int screenWidth);
+  void Move(const float deltaTime);
+  void Reset(const int screenWidth);
   void CheckCollisions(Paddle& leftPaddle, Paddle& rightPaddle, int& rightPlayerPoints,
                        int& leftPlayerPoints);
 

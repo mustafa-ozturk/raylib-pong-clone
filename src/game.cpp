@@ -1,6 +1,6 @@
 #include <game.h>
 
-Game::Game(int screenWidth, int screenHeight, bool debugMode)
+Game::Game(const int screenWidth, const int screenHeight, const bool debugMode)
     : m_leftPaddle(screenWidth, screenHeight, 50),
       m_rightPaddle(screenWidth, screenHeight, screenWidth - 50),
       m_ball(screenWidth, screenHeight)
@@ -27,7 +27,7 @@ void Game::Run()
   CloseWindow();
 }
 
-void Game::InputUpdate(float deltaTime)
+void Game::InputUpdate(const float deltaTime)
 {
   switch (m_currentScreen)
   {
@@ -75,7 +75,7 @@ void Game::InputUpdate(float deltaTime)
   }
 }
 
-void Game::GameUpdate(float deltaTime)
+void Game::GameUpdate(const float deltaTime)
 {
   if (m_currentScreen == GameScreen::GAME)
   {
@@ -89,7 +89,7 @@ void Game::GameUpdate(float deltaTime)
   }
 }
 
-void Game::Draw(float deltaTime)
+void Game::Draw(const float deltaTime)
 {
   BeginDrawing();
   ClearBackground(BLACK);
@@ -140,21 +140,18 @@ void Game::DrawStartScreen()
   double timeSinceInit = GetTime();
   if (static_cast<int>(timeSinceInit) % 2 == 0)
   {
-    DrawText(playText, m_screenWidth / 2 - playTextWidth / 2, m_screenHeight / 2, 40,
-                     WHITE);
+    DrawText(playText, m_screenWidth / 2 - playTextWidth / 2, m_screenHeight / 2, 40, WHITE);
   }
   else
   {
-    DrawText(playText, m_screenWidth / 2 - playTextWidth / 2, m_screenHeight / 2, 40,
-                     GRAY);
+    DrawText(playText, m_screenWidth / 2 - playTextWidth / 2, m_screenHeight / 2, 40, GRAY);
   }
 
   if (m_debugMode)
   {
     const char* debugModeText = "DEBUG MODE ENABLED";
     int debugModeTextWidth = MeasureText(debugModeText, 20);
-    DrawText("DEBUG MODE ENABLED", m_screenWidth / 2 - debugModeTextWidth / 2, 100 + 80, 20,
-                     GREEN);
+    DrawText("DEBUG MODE ENABLED", m_screenWidth / 2 - debugModeTextWidth / 2, 100 + 80, 20, GREEN);
   }
 }
 
@@ -177,27 +174,23 @@ void Game::DrawEndScreen()
   int replayTextWidth = MeasureText(replayText, 40);
   if (static_cast<int>(timeSinceInit) % 2 == 0)
   {
-    DrawText(replayText, m_screenWidth / 2 - replayTextWidth / 2, m_screenHeight / 2, 40,
-                     WHITE);
+    DrawText(replayText, m_screenWidth / 2 - replayTextWidth / 2, m_screenHeight / 2, 40, WHITE);
   }
   else
   {
-    DrawText(replayText, m_screenWidth / 2 - replayTextWidth / 2, m_screenHeight / 2, 40,
-                     GRAY);
+    DrawText(replayText, m_screenWidth / 2 - replayTextWidth / 2, m_screenHeight / 2, 40, GRAY);
   }
 }
 
 void Game::DrawPlayerPoints()
 {
-  int leftPlayerPointTextWidth =
-      MeasureText(TextFormat("%i", m_leftPlayerPoints), 100);
+  int leftPlayerPointTextWidth = MeasureText(TextFormat("%i", m_leftPlayerPoints), 100);
   DrawText(TextFormat("%i", m_leftPlayerPoints),
-                   m_screenWidth / 2 - 200 - leftPlayerPointTextWidth / 2, 50, 100, WHITE);
+           m_screenWidth / 2 - 200 - leftPlayerPointTextWidth / 2, 50, 100, WHITE);
 
-  int rightPlayerPointTextWidth =
-      MeasureText(TextFormat("%i", m_rightPlayerPoints), 100);
+  int rightPlayerPointTextWidth = MeasureText(TextFormat("%i", m_rightPlayerPoints), 100);
   DrawText(TextFormat("%i", m_rightPlayerPoints),
-                   m_screenWidth / 2 + 200 - rightPlayerPointTextWidth / 2, 50, 100, WHITE);
+           m_screenWidth / 2 + 200 - rightPlayerPointTextWidth / 2, 50, 100, WHITE);
 }
 
 void Game::DrawMidLine()
@@ -214,21 +207,23 @@ void Game::DrawDebugText()
 
   std::string ballPosDebug = "x: " + std::to_string(static_cast<int>(m_ball.GetXPos())) +
                              " , y: " + std::to_string(static_cast<int>(m_ball.GetYPos()));
-  DrawText(ballPosDebug.c_str(), static_cast<int>(m_ball.GetXPos()) + 10, static_cast<int>(m_ball.GetYPos()) + 10, 14,
-                   GREEN);
+  DrawText(ballPosDebug.c_str(), static_cast<int>(m_ball.GetXPos()) + 10,
+           static_cast<int>(m_ball.GetYPos()) + 10, 14, GREEN);
 
-  std::string ballSpeedDebug = "ball.speed x: " + std::to_string(static_cast<int>(m_ball.GetSpeedX())) +
-                               " , ball.speed y: " + std::to_string(static_cast<int>(m_ball.GetSpeedY()));
+  std::string ballSpeedDebug =
+      "ball.speed x: " + std::to_string(static_cast<int>(m_ball.GetSpeedX())) +
+      " , ball.speed y: " + std::to_string(static_cast<int>(m_ball.GetSpeedY()));
   DrawText(ballSpeedDebug.c_str(), 0, 20, 14, GREEN);
 
   std::cout << m_leftPaddle.GetYPos() << std::endl;
-  DrawText(
-      TextFormat("x: %i, y: %i", static_cast<int>(m_leftPaddle.GetXPos()), static_cast<int>(m_leftPaddle.GetYPos())),
-      static_cast<int>(m_leftPaddle.GetXPos()) + 20, static_cast<int>(m_leftPaddle.GetYPos()), 14, GREEN);
+  DrawText(TextFormat("x: %i, y: %i", static_cast<int>(m_leftPaddle.GetXPos()),
+                      static_cast<int>(m_leftPaddle.GetYPos())),
+           static_cast<int>(m_leftPaddle.GetXPos()) + 20, static_cast<int>(m_leftPaddle.GetYPos()),
+           14, GREEN);
   DrawText(TextFormat("x: %i, y: %i", static_cast<int>(m_rightPaddle.GetXPos()),
-                                      static_cast<int>(m_rightPaddle.GetYPos())),
-                   static_cast<int>(m_rightPaddle.GetXPos()) - 100, static_cast<int>(m_rightPaddle.GetYPos()), 14,
-                   GREEN);
+                      static_cast<int>(m_rightPaddle.GetYPos())),
+           static_cast<int>(m_rightPaddle.GetXPos()) - 100,
+           static_cast<int>(m_rightPaddle.GetYPos()), 14, GREEN);
 
   std::string getFrameTime = "GetFrameTime(): " + std::to_string(GetFrameTime());
   DrawText(getFrameTime.c_str(), 0, 40, 14, GREEN);

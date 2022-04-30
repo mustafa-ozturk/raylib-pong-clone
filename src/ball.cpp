@@ -1,6 +1,6 @@
 #include "ball.h"
 
-Ball::Ball(int screenWidth, int screenHeight)
+Ball::Ball(const int screenWidth, const int screenHeight)
 {
   m_screenWidth = screenWidth;
   m_screenHeight = screenHeight;
@@ -32,13 +32,13 @@ void Ball::Draw()
   DrawCircle(static_cast<int>(m_x), static_cast<int>(m_y), m_radius, WHITE);
 }
 
-void Ball::Move(float deltaTime)
+void Ball::Move(const float deltaTime)
 {
   m_x += m_speedX * deltaTime;
   m_y += m_speedY * deltaTime;
 }
 
-void Ball::Reset(int screenWidth)
+void Ball::Reset(const int screenWidth)
 {
   m_x = screenWidth / 2.0f;
   m_y = 0;

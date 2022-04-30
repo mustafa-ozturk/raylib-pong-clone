@@ -6,7 +6,7 @@ struct Rectangle;
 class Paddle
 {
  public:
-  Paddle(int screenWidth, int screenHeight, int xPos);
+  Paddle(const int screenWidth, const int screenHeight, const int xPos);
 
   Rectangle GetRect() const;
   float GetYPos() const;
@@ -14,10 +14,10 @@ class Paddle
   int GetHeight() const;
 
   void Draw();
-  void MoveUp(float deltaTime);
-  void MoveDown(float deltaTime);
-  void ShrinkHeight(int amount);
-  void Reset(int xPos);
+  void MoveUp(const float deltaTime);
+  void MoveDown(const float deltaTime);
+  void ShrinkHeight(const int amount);
+  void Reset(const int xPos);
 
  private:
   float m_x = 0;
