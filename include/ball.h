@@ -15,6 +15,7 @@ class Ball
   void Draw();
   void Move(const float deltaTime);
   void Reset(const int screenWidth);
+  /* CheckCollisions checks X, Y and ball to paddle collisions. */
   void CheckCollisions(Paddle& leftPaddle, Paddle& rightPaddle, int& rightPlayerPoints,
                        int& leftPlayerPoints);
 
