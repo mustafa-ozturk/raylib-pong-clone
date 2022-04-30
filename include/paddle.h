@@ -6,6 +6,7 @@ struct Rectangle;
 class Paddle
 {
  public:
+  Paddle() = delete;
   Paddle(const int screenWidth, const int screenHeight, const int xPos);
 
   Rectangle GetRect() const;

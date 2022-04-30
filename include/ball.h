@@ -5,6 +5,7 @@
 class Ball
 {
  public:
+  Ball() = delete;
   Ball(const int screenWidth, const int screenHeight);
 
   float GetXPos() const;

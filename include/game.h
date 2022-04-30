@@ -15,7 +15,7 @@ class Game
     GAME,
     END
   } GameScreen;
-  
+  Game() = delete;
   Game(const int screenWidth, const int screenHeight, const bool debugMode);
   void Run();
 
