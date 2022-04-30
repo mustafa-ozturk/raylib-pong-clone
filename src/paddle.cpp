@@ -8,26 +8,26 @@ Paddle::Paddle(int screenWidth, int screenHeight, int xPos)
   m_y = m_screenHeight / 2;
 }
 
-float Paddle::GetYPos()
+float Paddle::GetYPos() const
 {
   return m_y;
 }
 
-float Paddle::GetXPos()
+float Paddle::GetXPos() const
 {
   return m_x;
 }
 
-int Paddle::GetHeight()
+int Paddle::GetHeight() const
 {
   return m_height;
 }
 
-Rectangle Paddle::GetRect()
+Rectangle Paddle::GetRect() const
 {
   return Rectangle{m_x - m_width / 2,   // centerX
-                           m_y - m_height / 2,  // centerY
-                           static_cast<float>(m_width), static_cast<float>(m_height)};
+                   m_y - m_height / 2,  // centerY
+                   static_cast<float>(m_width), static_cast<float>(m_height)};
 }
 
 void Paddle::Draw()

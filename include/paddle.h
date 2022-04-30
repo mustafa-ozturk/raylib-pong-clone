@@ -8,10 +8,10 @@ class Paddle
  public:
   Paddle(int screenWidth, int screenHeight, int xPos);
 
-  Rectangle GetRect();
-  float GetYPos();
-  float GetXPos();
-  int GetHeight();
+  Rectangle GetRect() const;
+  float GetYPos() const;
+  float GetXPos() const;
+  int GetHeight() const;
 
   void Draw();
   void MoveUp(float deltaTime);

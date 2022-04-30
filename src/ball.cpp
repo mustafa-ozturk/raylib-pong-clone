@@ -7,22 +7,22 @@ Ball::Ball(int screenWidth, int screenHeight)
   m_x = m_screenWidth / 2.0f;
 }
 
-float Ball::GetXPos()
+float Ball::GetXPos() const
 {
   return m_x;
 }
 
-float Ball::GetYPos()
+float Ball::GetYPos() const
 {
   return m_y;
 }
 
-float Ball::GetSpeedX()
+float Ball::GetSpeedX() const
 {
   return m_speedX;
 }
 
-float Ball::GetSpeedY()
+float Ball::GetSpeedY() const
 {
   return m_speedY;
 }

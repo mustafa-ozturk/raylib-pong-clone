@@ -7,10 +7,10 @@ class Ball
  public:
   Ball(int screenWidth, int screenHeight);
 
-  float GetXPos();
-  float GetYPos();
-  float GetSpeedX();
-  float GetSpeedY();
+  float GetXPos() const;
+  float GetYPos() const;
+  float GetSpeedX() const;
+  float GetSpeedY() const;
 
   void Draw();
   void Move(float deltaTime);
