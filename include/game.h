@@ -1,10 +1,10 @@
 #pragma once
-#include <string>
-#include <iostream>
-#include <raylib.h>
-#include <paddle.h>
 #include <ball.h>
+#include <paddle.h>
+#include <raylib.h>
 
+#include <iostream>
+#include <string>
 
 typedef enum GameScreen
 {
@@ -13,9 +13,12 @@ typedef enum GameScreen
   END
 } GameScreen;
 
-
 class Game
 {
+ public:
+  Game(int screenWidth, int screenHeight, bool debugMode);
+  void Run();
+
  private:
   bool m_debugMode = false;
   int m_screenWidth = 0;
@@ -38,8 +41,4 @@ class Game
   void m_DrawEndScreen();
   void m_DrawMidLine();
   void m_DrawDebugText();
-
- public:
-  Game(int screenWidth, int screenHeight, bool debugMode);
-  void Run();
 };
