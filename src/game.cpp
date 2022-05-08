@@ -15,8 +15,8 @@ void Game::Run()
   InitWindow(m_screenWidth, m_screenHeight, "raylib pong clone");
   SetTargetFPS(60);
   // Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-  m_redShader = LoadShader(0, "../../shader/red.fs");
-  m_blueShader = LoadShader(0, "../../shader/blue.fs");
+  m_redShader = LoadShader(nullptr, "../shader/red.fs");
+  m_blueShader = LoadShader(nullptr, "../shader/blue.fs");
   while (!WindowShouldClose())
   {
     float deltaTime = GetFrameTime();
